@@ -1,6 +1,6 @@
 {
   "name": "CommandLine",
-  "type": "executer",
+  "type": "executor",
   "exposeRoute": false,
   "execProggram": "node",
   "main": "app.js",
