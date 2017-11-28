@@ -73,6 +73,8 @@ var functions = {
 function main(argv) {
 	if (argv.length < 3) {
 		console.log('{err: "not enough parameters"}');
+		// Invalid Argument
+		// Either an unknown option was specified, or an option requiring a value was provided without a value.
 		process.exit(9);
 	}
 	var action = JSON.parse(argv[2]);
@@ -81,6 +83,8 @@ function main(argv) {
 		process.exit(0); // Success
 	}, function(err) {
 		console.log("an error occured", err);
+        // Uncaught Fatal Exception
+		// There was an uncaught exception, and it was not handled by a domain or an 'uncaughtException' event handler.
 		process.exit(1); // Failure
 	});
 }
