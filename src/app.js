@@ -1,6 +1,5 @@
 var exec = require('child_process').exec;
 var q = require('q');
-var async = require('async');
 
 function executeCMD(action){
 	var deferred = q.defer();
