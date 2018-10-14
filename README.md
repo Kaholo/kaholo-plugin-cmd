@@ -1,3 +1,3 @@
-# pm-plugin-cmd
-CMD plugin for Productionmap
+# kaholo-plugin-cmd
+CMD plugin for Kaholo
 
