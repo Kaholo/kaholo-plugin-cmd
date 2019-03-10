@@ -19,7 +19,7 @@
       "actionString": "COMMANDS"
     },
     {
-      "name": "execute commands",
+      "name": "executeMultipleCommands",
       "viewName": "execute multiple commands",
       "params": [
         {

@@ -1,9 +1,17 @@
 var exec = require('child_process').exec;
 var q = require('q');
 
+
+String.prototype.replaceAll = function(search, replacement) {
+    var target = this;
+    return target.replace(new RegExp(search, 'g'), replacement);
+};
+
 function executeCMD(action){
 	var deferred = q.defer();
 	var execString = action.method.actionString;
+	isArray = Array.isArray(action.params[execString]);
+
 	for (var i =0; i< action.method.params.length;i++){
 		var param = action.method.params[i].name;
 		if (action.params.hasOwnProperty(param)) {
@@ -13,6 +21,12 @@ function executeCMD(action){
 			execString = execString.replace(param, '');
 		}
 	}
+	execString = execString.replaceAll('\n', ' && ');
+
+	if(isArray){
+		execString = execString.replaceAll(',', ' && ');
+	}
+
 	exec(execString,
 		 function(error, stdout, stderr){
 			if(error){
@@ -66,5 +80,6 @@ module.exports = {
     execute: executeCMD,
 	executeFile: executeCMD,
 	remoteCommandExecute: executeCMD,
-	executeMultiple: executeMultiple
+	executeMultiple: executeMultiple,
+	executeMultipleCommands : executeCMD
 };
