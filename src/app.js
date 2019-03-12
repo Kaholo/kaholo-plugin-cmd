@@ -1,70 +1,110 @@
-var exec = require('child_process').exec;
-var q = require('q');
+const child_process = require("child_process")
+const exec = require('ssh-exec');
 
 function executeCMD(action){
-	var deferred = q.defer();
-	var execString = action.method.actionString;
-	for (var i =0; i< action.method.params.length;i++){
-		var param = action.method.params[i].name;
-		if (action.params.hasOwnProperty(param)) {
-			execString = execString.replace(param, action.params[param]);
-		}
-		else{
-			execString = execString.replace(param, '');
-		}
-	}
-	exec(execString,
-		 function(error, stdout, stderr){
-			if(error){
-				return deferred.reject(stderr);
-			}
-			return deferred.resolve(stdout);
-		 }
-	);
-	return deferred.promise;
+	return new Promise((resolve,reject) => {
+		let execString = action.params.COMMANDS;
+		_executeSingleCommand(execString)
+		.then((res) => {
+			return resolve(res);
+		})
+		.catch((err) => {
+			return reject(err);
+		})
+
+	})
 }
 
-function executeMultiple(action) {
-	var deffered = q.defer();
-	var command = action.params.command;
-	var paramsList = JSON.parse(action.params.paramsList.value);
-	async.map(paramsList, function(params, callback) {
-		var execString = command + " ";
-		for (var i = 0; i < params.length; i++) {
-			execString += params[i] + " ";
-		}
-		exec(execString,
-			 function(error, stdout, stderr){
-				if(error){
-					return callback(null, stderr);
-				}
-				return callback(null, stdout);
-			 }
-		);
-	}, function(err, results){
-		if(err){
-			return deffered.resolve(err);
-		}
-		var res = "Results:\n";
-		for (var i = 0; i < results.length; i++) {
-			var cres = results[i];
-			res += i + ":";
-			if(cres.error){
-				res += cres.error;
-			}
-			else{
-				res += cres.res;
-			}
-		}
 
-		return deffered.resolve({"res": res});
-	});
-	return deffered.promise;
+function executeMultipleCmd(action){
+	return new Promise((resolve,reject) => {
+		let commands = _handleParams(action.params.COMMANDS);
+		var commandArray = typeof commands == 'object' ? commands : commands.split('\n');
+		_executeMultipleCommands(commandArray)
+		.then((res) => {
+			return resolve(res);
+		})
+		.catch((error) => {
+			return reject(error);
+		})
+	})
 }
+
+function remoteCommandExecute(action){
+	return new Promise((resolve,reject) => {
+		exec(action.params.COMMANDS, {
+			user: action.params.REMOTE_USER,
+			host: action.params.REMOTE_ADDRESS,
+			key:action.params.KEY_PATH,
+		  }, (err, stdout, stderr) => {
+			  if(err){
+				  return reject(err)
+			  }
+			  else return resolve(stdout)
+		  })
+	})
+}
+
+function executeMultiple(action){
+	return new Promise((resolve,reject) => {
+		let commands = [];
+		for(let i =0,length = parseInt(action.params.numberOfTime,10);i<length;i++){
+			commands.push(action.params.COMMANDS)
+		}
+		_executeMultipleCommands(commands)
+		.then((res) => {
+			return resolve(res);
+		})
+		.catch((error) => {
+			return reject(error)
+		})
+	})
+}
+
+function _handleParams(param){
+	if (typeof param == 'string')
+		return JSON.parse(JSON.stringify(param));
+	else 
+		return param;
+}
+
+function _executeSingleCommand(command){
+	return new Promise((resolve,reject) => {
+		child_process.exec(command, (error, stdout, stderr) => {
+			if (error) {
+			   return reject(`exec error: ${error}`);
+			}
+			if (stderr) {
+				console.log(`stderr: ${stderr}`);
+			}
+			return resolve(stdout);
+		});
+	})
+}
+
+function _executeMultipleCommands(commands){
+	return new Promise((resolve,reject) => {
+		commands.reduce((promiseChain, next) => {
+            return promiseChain.then((chainResult) =>{
+				return _executeSingleCommand(next).then((result) => {
+					return [...chainResult,result];
+				})
+			})
+        }, Promise.resolve([]))
+            .then((res) => {
+                return resolve(res);
+            })
+            .catch((error) => {
+               return reject(error);
+            })
+	})
+}
+
 
 module.exports = {
-    execute: executeCMD,
-	executeFile: executeCMD,
-	remoteCommandExecute: executeCMD,
-	executeMultiple: executeMultiple
-};
+	execute:executeCMD,
+	executeCommands:executeMultipleCmd,
+	remoteCommandExecute:remoteCommandExecute,
+	executeMultiple:executeMultiple
+}
+
