@@ -2,31 +2,26 @@ const child_process = require("child_process")
 const exec = require('ssh-exec');
 
 function executeCMD(action){
-	return new Promise((resolve,reject) => {
-		let execString = action.params.COMMANDS;
-		_executeSingleCommand(execString)
-		.then((res) => {
-			return resolve(res);
-		})
-		.catch((err) => {
-			return reject(err);
-		})
-
+	let execString = action.params.COMMANDS;
+	_executeSingleCommand(execString)
+	.then((res) => {
+		return resolve(res);
+	})
+	.catch((err) => {
+		return reject(err);
 	})
 }
 
 
 function executeMultipleCmd(action){
-	return new Promise((resolve,reject) => {
-		let commands = _handleParams(action.params.COMMANDS);
-		var commandArray = typeof commands == 'object' ? commands : commands.split('\n');
-		_executeMultipleCommands(commandArray)
-		.then((res) => {
-			return resolve(res);
-		})
-		.catch((error) => {
-			return reject(error);
-		})
+	let commands = _handleParams(action.params.COMMANDS);
+	var commandArray = typeof commands == 'object' ? commands : commands.split('\n');
+	_executeMultipleCommands(commandArray)
+	.then((res) => {
+		return resolve(res);
+	})
+	.catch((error) => {
+		return reject(error);
 	})
 }
 
@@ -46,18 +41,16 @@ function remoteCommandExecute(action){
 }
 
 function executeMultiple(action){
-	return new Promise((resolve,reject) => {
-		let commands = [];
-		for(let i =0,length = parseInt(action.params.numberOfTime,10);i<length;i++){
-			commands.push(action.params.COMMANDS)
-		}
-		_executeMultipleCommands(commands)
-		.then((res) => {
-			return resolve(res);
-		})
-		.catch((error) => {
-			return reject(error)
-		})
+	let commands = [];
+	for(let i =0,length = parseInt(action.params.numberOfTime,10);i<length;i++){
+		commands.push(action.params.COMMANDS)
+	}
+	_executeMultipleCommands(commands)
+	.then((res) => {
+		return resolve(res);
+	})
+	.catch((error) => {
+		return reject(error)
 	})
 }
 
@@ -83,21 +76,19 @@ function _executeSingleCommand(command){
 }
 
 function _executeMultipleCommands(commands){
-	return new Promise((resolve,reject) => {
-		commands.reduce((promiseChain, next) => {
-            return promiseChain.then((chainResult) =>{
-				return _executeSingleCommand(next).then((result) => {
-					return [...chainResult,result];
-				})
+	commands.reduce((promiseChain, next) => {
+		return promiseChain.then((chainResult) =>{
+			return _executeSingleCommand(next).then((result) => {
+				return [...chainResult,result];
 			})
-        }, Promise.resolve([]))
-            .then((res) => {
-                return resolve(res);
-            })
-            .catch((error) => {
-               return reject(error);
-            })
-	})
+		})
+	}, Promise.resolve([]))
+		.then((res) => {
+			return resolve(res);
+		})
+		.catch((error) => {
+			return reject(error);
+		})
 }
 
 
