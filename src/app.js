@@ -3,26 +3,13 @@ const exec = require('ssh-exec');
 
 function executeCMD(action){
 	let execString = action.params.COMMANDS;
-	_executeSingleCommand(execString)
-	.then((res) => {
-		return resolve(res);
-	})
-	.catch((err) => {
-		return reject(err);
-	})
+	return _executeSingleCommand(execString);
 }
-
 
 function executeMultipleCmd(action){
 	let commands = _handleParams(action.params.COMMANDS);
 	var commandArray = typeof commands == 'object' ? commands : commands.split('\n');
-	_executeMultipleCommands(commandArray)
-	.then((res) => {
-		return resolve(res);
-	})
-	.catch((error) => {
-		return reject(error);
-	})
+	return _executeMultipleCommands(commandArray);
 }
 
 function remoteCommandExecute(action){
@@ -45,13 +32,7 @@ function executeMultiple(action){
 	for(let i =0,length = parseInt(action.params.numberOfTime,10);i<length;i++){
 		commands.push(action.params.COMMANDS)
 	}
-	_executeMultipleCommands(commands)
-	.then((res) => {
-		return resolve(res);
-	})
-	.catch((error) => {
-		return reject(error)
-	})
+	return _executeMultipleCommands(commands);
 }
 
 function _handleParams(param){
@@ -76,19 +57,13 @@ function _executeSingleCommand(command){
 }
 
 function _executeMultipleCommands(commands){
-	commands.reduce((promiseChain, next) => {
+	return commands.reduce((promiseChain, next) => {
 		return promiseChain.then((chainResult) =>{
 			return _executeSingleCommand(next).then((result) => {
 				return [...chainResult,result];
 			})
 		})
-	}, Promise.resolve([]))
-		.then((res) => {
-			return resolve(res);
-		})
-		.catch((error) => {
-			return reject(error);
-		})
+	}, Promise.resolve([]));
 }
 
 
