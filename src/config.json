@@ -19,6 +19,18 @@
       "actionString": "COMMANDS"
     },
     {
+      "name": "executeWindowsScript",
+      "viewName": "execute Win Scripts",
+      "params": [
+        {
+          "name": "COMMANDS",
+          "viewName": "command",
+          "type": "string"
+        }
+      ],
+      "actionString": "COMMANDS"
+    },
+    {
       "name": "executeCommands",
       "viewName": "execute multiple commands",
       "params": [

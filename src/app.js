@@ -1,6 +1,18 @@
 const child_process = require("child_process")
 const exec = require('ssh-exec');
 
+/**var act = {"params":[{
+		COMMANDS: "cd ilan && \"test.bat\""
+	}
+	]
+}
+
+var act = {
+	COMMANDS: "cd c:\\ilan && \"test.bat\""
+}
+executeWindowsScript(act)
+*/
+
 function executeCMD(action){
 	let execString = action.params.COMMANDS;
 	return _executeSingleCommand(execString);
@@ -42,6 +54,35 @@ function _handleParams(param){
 		return param;
 }
 
+function executeWindowsScript(action) {
+	let command = action.params.COMMANDS
+	return new Promise((resolve,reject) => {
+		
+		var ls = child_process.exec(command, (error, stdout, stderr) => {
+			ls.stdout.on('data', function (data) {
+			console.log(data);
+			});
+			ls.stderr.on('data', function (data) {
+			console.log(data);
+			});
+			ls.on('close', function (code) {
+			if (code == 0)
+					console.log('Stop');
+			else
+					console.log('Start');
+			});
+			if (error) {
+				return reject(`exec error: ${error}`);
+			}
+			if (stderr) {
+				console.log(`stderr: ${stderr}`);
+			}
+			return resolve(stdout);
+		});
+	})
+};
+
+
 function _executeSingleCommand(command){
 	return new Promise((resolve,reject) => {
 		child_process.exec(command, (error, stdout, stderr) => {
@@ -66,9 +107,9 @@ function _executeMultipleCommands(commands){
 	}, Promise.resolve([]));
 }
 
-
 module.exports = {
 	execute:executeCMD,
+	executeWindowsScript:executeWindowsScript,
 	executeCommands:executeMultipleCmd,
 	remoteCommandExecute:remoteCommandExecute,
 	executeMultiple:executeMultiple
