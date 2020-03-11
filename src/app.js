@@ -1,18 +1,6 @@
 const child_process = require("child_process")
 const exec = require('ssh-exec');
 
-/**var act = {"params":[{
-		COMMANDS: "cd ilan && \"test.bat\""
-	}
-	]
-}
-
-var act = {
-	COMMANDS: "cd c:\\ilan && \"test.bat\""
-}
-executeWindowsScript(act)
-*/
-
 function executeCMD(action){
 	let execString = action.params.COMMANDS;
 	return _executeSingleCommand(execString);
