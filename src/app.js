@@ -1,5 +1,5 @@
 const child_process = require("child_process")
-//const exec = require('ssh-exec');
+const exec = require('ssh-exec');
 
 function executeCMD(action){
 	let execString = action.params.COMMANDS;
@@ -95,9 +95,6 @@ function _executeMultipleCommands(commands){
 		})
 	}, Promise.resolve([]));
 }
-
-executeCMD({params:{COMMANDS:"/Users/ilanyaniv/Dropbox/Kaholo/Customers/Elbit/testFail.bash"}})
-
 
 module.exports = {
 	execute:executeCMD,
