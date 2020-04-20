@@ -4,7 +4,7 @@
   "exposeRoute": false,
   "execProgram": "node",
   "main": "app.js",
-  "version": "1.1.0",
+  "version": "1.2.0",
   "methods": [
     {
       "name": "execute",
@@ -81,6 +81,22 @@
         {
           "name": "numberOfTime",
           "viewName": "Number of time",
+          "type": "string"
+        }
+      ]
+    },
+    {
+      "name": "executeInteractiveWindowsCommand",
+      "viewName": "Execute windows interactive",
+      "params": [
+        {
+          "name": "command",
+          "viewName": "Command",
+          "type": "string"
+        },
+        {
+          "name": "workingDirectory",
+          "viewName": "Working Directory",
           "type": "string"
         }
       ]

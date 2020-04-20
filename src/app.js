@@ -1,4 +1,5 @@
-const child_process = require("child_process")
+const child_process = require("child_process");
+const path = require('path');
 const exec = require('ssh-exec');
 
 function executeCMD(action){
@@ -24,6 +25,29 @@ function remoteCommandExecute(action){
 			  }
 			  else return resolve(stdout)
 		  })
+	})
+}
+
+function executeInteractiveWindowsCommand(action){
+	if(!action.params.command) 
+		return Promise.reject("Command not specified");
+
+	return _getWindowsSessionId().then(sessionId=>{
+		const paexecPath = path.join(__dirname, "utils/paexec.exe")
+		const args = [
+			paexecPath,
+			"-s",
+			"-i",
+			sessionId,
+		]
+
+		if(action.params.workingDirectory){
+			args.push("-w", action.params.workingDirectory)
+		}
+
+		args.push("cmd /c", action.params.command);
+
+		return _executeSingleCommand(args.join(' '))
 	})
 }
 
@@ -96,11 +120,28 @@ function _executeMultipleCommands(commands){
 	}, Promise.resolve([]));
 }
 
+function _getWindowsSessionId(){
+    return _executeSingleCommand('tasklist /fi "imagename eq winlogon.exe" /FO CSV').then(res=>{
+		const lines = res.split("\n");
+		const columns = lines[0].split(',');
+		const sessionColumn = columns.findIndex(col=>col=='"Session#"');
+
+		if(sessionColumn == -1)	throw "Could not find session";
+
+		const sessionString = lines[1].split(",")[sessionColumn];
+		const sessionNumber = parseInt(sessionString.slice(1,-1));
+		if (sessionNumber == NaN) throw "Could not find session"
+
+		return sessionNumber;
+	})
+}
+
 module.exports = {
 	execute:executeCMD,
 	executeWindowsScript:executeWindowsScript,
 	executeCommands:executeMultipleCmd,
 	remoteCommandExecute:remoteCommandExecute,
-	executeMultiple:executeMultiple
+	executeMultiple:executeMultiple,
+	executeInteractiveWindowsCommand: executeInteractiveWindowsCommand
 }
 

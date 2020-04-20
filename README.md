@@ -11,6 +11,15 @@ This method will execute a command line
 **Parameter:**
 1. The command to execute.
 
+### Method: Execute Windows interactive
+**Description:**
+
+This is to execute desktop interactive commands while running an agent as windows service.
+
+**Parameters:**
+1. Command: The command to execute.
+2. Working Directory: The directory to execute the command from (Optional).
+
 ### Method: Execute Windows script
 **Description:**
 
