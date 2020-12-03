@@ -121,7 +121,7 @@ function _executeMultipleCommands(commands){
 }
 
 function _getWindowsSessionId(){
-    return _executeSingleCommand('tasklist /fi "imagename eq winlogon.exe" /FO CSV').then(res=>{
+    return _executeSingleCommand('tasklist /fi "imagename eq explorer.exe" /FO CSV').then(res=>{
 		const lines = res.split("\n");
 		const columns = lines[0].split(',');
 		const sessionColumn = columns.findIndex(col=>col=='"Session#"');

@@ -1,6 +1,6 @@
 {
   "name": "pm-plugin-commandline",
-  "version": "1.0.0",
+  "version": "1.2.1",
   "description": "Simple command line tool",
   "main": "app.js",
   "scripts": {
