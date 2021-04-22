@@ -9,7 +9,8 @@ CMD plugin for Kaholo
 This method will execute a command line
 
 **Parameter:**
-1. The command to execute.
+1. Working Directory
+2. Command to execute.
 
 ### Method: Execute Windows interactive
 **Description:**
