@@ -4,7 +4,9 @@ const exec = require('ssh-exec');
 
 function executeCMD(action){
 	let execString = action.params.COMMANDS;
-	return _executeSingleCommand(execString);
+	return _executeSingleCommand(execString,{
+		cwd : action.params.workingDir || null
+	});
 }
 
 function executeMultipleCmd(action){
@@ -95,9 +97,9 @@ function executeWindowsScript(action) {
 };
 
 
-function _executeSingleCommand(command){
+function _executeSingleCommand(command, options){
 	return new Promise((resolve,reject) => {
-		child_process.exec(command, (error, stdout, stderr) => {
+		child_process.exec(command, options || {} ,(error, stdout, stderr) => {
 			if (error) {
 				console.log(`${stdout}`)
 			   return reject(`exec error: ${error}`);

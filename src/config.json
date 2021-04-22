@@ -4,12 +4,17 @@
   "exposeRoute": false,
   "execProgram": "node",
   "main": "app.js",
-  "version": "1.2.1",
+  "version": "1.2.2",
   "methods": [
     {
       "name": "execute",
       "viewName": "execute command",
       "params": [
+        {
+          "name": "workingDir",
+          "viewName": "Working Directory",
+          "type": "string"
+        },
         {
           "name": "COMMANDS",
           "viewName": "command",
