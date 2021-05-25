@@ -148,44 +148,6 @@ function _executeSingleCommand(command, options){
 	})
 }
 
-function executeSingleCommandTestClose(action, settings){
-	const command = action.params.COMMANDS;
-
-	
-}
-
-function executeSingleCommandTestExit(action, settings){
-	const command = action.params.COMMANDS;
-
-	return new Promise((resolve,reject) => {
-		let stdout='', stderr='', events = [];
-		const proc = child_process.exec(command, {});
-		proc.stdout.on('data',(chunk)=>{
-			stdout+= chunk;
-		})
-
-		proc.stderr.on('data',(chunk)=>{
-			stderr+= chunk;
-		})
-		
-		proc.on('close',(code, signal)=>{
-			events.push({e: 'close', code, signal});
-		})
-
-		proc.on('exit',(code, signal)=>{
-			events.push({e: 'exit', code, signal});
-			if(code === 0)
-				return resolve({events, stdout, stderr});
-			reject({events, stdout, stderr});
-		})
-
-		proc.on('error',(err)=>{
-			reject({err, stdout, stderr});
-		})
-
-	})
-}
-
 function _executeMultipleCommands(commands){
 	return commands.reduce((promiseChain, next) => {
 		return promiseChain.then((chainResult) =>{
