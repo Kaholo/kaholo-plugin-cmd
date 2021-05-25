@@ -4,7 +4,7 @@
   "exposeRoute": false,
   "execProgram": "node",
   "main": "app.js",
-  "version": "1.2.3",
+  "version": "2.0.0",
   "methods": [
     {
       "name": "execute",
@@ -19,29 +19,11 @@
           "name": "COMMANDS",
           "viewName": "command",
           "type": "string"
-        }
-      ],
-      "actionString": "COMMANDS"
-    },
-    {
-      "name": "executeSingleCommandTestExit",
-      "viewName": "execute - test exit",
-      "params": [
+        },
         {
-          "name": "COMMANDS",
-          "viewName": "command",
-          "type": "string"
-        }
-      ]
-    },
-    {
-      "name": "executeSingleCommandTestClose",
-      "viewName": "execute - test close",
-      "params": [
-        {
-          "name": "COMMANDS",
-          "viewName": "command",
-          "type": "string"
+          "name": "exitOnClose",
+          "viewName": "Wait for close",
+          "type": "boolean"
         }
       ]
     },

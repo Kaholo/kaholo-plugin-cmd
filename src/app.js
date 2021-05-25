@@ -3,10 +3,46 @@ const path = require('path');
 const exec = require('ssh-exec');
 
 function executeCMD(action){
-	let execString = action.params.COMMANDS;
-	return _executeSingleCommand(execString,{
+	const command = action.params.COMMANDS;
+	const execOptions = {
 		cwd : action.params.workingDir || null
-	});
+	}
+	const exitOnClose = (action.params.exitOnClose === true || action.params.exitOnClose === 'true')
+	
+	return new Promise((resolve,reject) => {
+		let stdout='', stderr='';
+		const resolver = (code, signal)=>{
+			if(code === 0)
+				return resolve(stdout);
+			reject({code, signal, stdout, stderr});
+		};
+		
+		const proc = child_process.exec(command, execOptions);
+		proc.stdout.on('data',(chunk)=>{
+			stdout+= chunk;
+		})
+
+		proc.stderr.on('data',(chunk)=>{
+			stderr+= chunk;
+		})
+		
+		proc.on('close',(code, signal)=>{
+			if (exitOnClose){
+				return resolver(code,signal);
+			}
+		})
+
+		proc.on('exit',(code, signal)=>{
+			if (!exitOnClose){
+				return resolver(code,signal);
+			}
+		})
+
+		proc.on('error',(err)=>{
+			reject({err, stdout, stderr});
+		})
+
+	})
 }
 
 function executeMultipleCmd(action){
@@ -115,33 +151,7 @@ function _executeSingleCommand(command, options){
 function executeSingleCommandTestClose(action, settings){
 	const command = action.params.COMMANDS;
 
-	return new Promise((resolve,reject) => {
-		let stdout='', stderr='', events = [];
-		const proc = child_process.exec(command, {});
-		proc.stdout.on('data',(chunk)=>{
-			stdout+= chunk;
-		})
-
-		proc.stderr.on('data',(chunk)=>{
-			stderr+= chunk;
-		})
-		
-		proc.on('close',(code, signal)=>{
-			events.push({e: 'close', code, signal});
-			if(code === 0)
-				return resolve({events, stdout, stderr});
-			reject({events, stdout, stderr});
-		})
-
-		proc.on('exit',(code, signal)=>{
-			events.push({e: 'exit', code, signal});
-		})
-
-		proc.on('error',(err)=>{
-			reject({err, stdout, stderr});
-		})
-
-	})
+	
 }
 
 function executeSingleCommandTestExit(action, settings){
@@ -208,8 +218,5 @@ module.exports = {
 	executeCommands:executeMultipleCmd,
 	remoteCommandExecute:remoteCommandExecute,
 	executeMultiple:executeMultiple,
-	executeInteractiveWindowsCommand: executeInteractiveWindowsCommand,
-	// test methods
-	executeSingleCommandTestExit,
-	executeSingleCommandTestClose
+	executeInteractiveWindowsCommand: executeInteractiveWindowsCommand
 }

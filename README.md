@@ -11,6 +11,7 @@ This method will execute a command line
 **Parameter:**
 1. Working Directory
 2. Command to execute.
+3. Wait for close - indicates rather exit event is enough or it should wait until all stdio are closed as well.
 
 ### Method: Execute Windows interactive
 **Description:**
