@@ -43,10 +43,10 @@ This method will exeucte multiple commands.
 This method will execute a command line to a remote machine.
 
 **Parameters:**
-1. Command - The command to execute remotly
-2. Remote User - The user to connect to the remote server
-3. Remote Password - The password to connect to the remote server
-4. Path to Key - a path to the key file such as SSH key.
+1. Key Path (String) **Optional** - A path to the key file such as SSH key.
+2. Remote User (String) **Required** - The user to connect to the remote server
+3. Remote Address (String) **Required** - The url of the remote Host to run the command on.
+4. Command (String) **Required** - The command to run on the remote server.
 
 ### Method: Execute command Multiple times.
 **Description:**
