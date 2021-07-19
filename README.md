@@ -46,6 +46,7 @@ This method will execute a command line to a remote machine.
 1. Key Path (String) **Optional** - A path to the key file such as SSH key.
 2. Remote User (String) **Required** - The user to connect to the remote server
 3. Remote Address (String) **Required** - The url of the remote Host to run the command on.
+4. Port (Integer) **Optional** - The port to communicate with the remote host. Default value is 22;
 4. Command (String) **Required** - The command to run on the remote server.
 
 ### Method: Execute command Multiple times.
