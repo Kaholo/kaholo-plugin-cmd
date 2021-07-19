@@ -4,7 +4,7 @@
   "exposeRoute": false,
   "execProgram": "node",
   "main": "app.js",
-  "version": "2.0.0",
+  "version": "2.0.1",
   "methods": [
     {
       "name": "execute",
@@ -57,22 +57,27 @@
       "params": [
         {
           "name": "KEY_PATH",
-          "viewName": "key path",
+          "viewName": "Key Path",
           "type": "string"
         },
         {
           "name": "REMOTE_USER",
-          "viewName": "remote user",
+          "viewName": "Remote User",
           "type": "string"
         },
         {
           "name": "REMOTE_ADDRESS",
-          "viewName": "remote address",
+          "viewName": "Remote Address",
+          "type": "string"
+        },
+        {
+          "name": "port",
+          "viewName": "Port",
           "type": "string"
         },
         {
           "name": "COMMANDS",
-          "viewName": "command",
+          "viewName": "Command",
           "type": "string"
         }
       ],

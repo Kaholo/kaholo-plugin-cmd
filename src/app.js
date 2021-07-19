@@ -56,12 +56,13 @@ function remoteCommandExecute(action){
 		exec(action.params.COMMANDS, {
 			user: action.params.REMOTE_USER,
 			host: action.params.REMOTE_ADDRESS,
+			port: action.params.port,
 			key:action.params.KEY_PATH,
 		  }, (err, stdout, stderr) => {
 			  if(err){
-				  return reject(err)
+				  return reject({err, stderr});
 			  }
-			  else return resolve(stdout)
+			  else return resolve(stdout);
 		  })
 	})
 }
