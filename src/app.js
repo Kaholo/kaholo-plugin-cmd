@@ -4,9 +4,11 @@ const exec = require('ssh-exec');
 
 function executeCMD(action){
 	const command = action.params.COMMANDS;
+	const shell = action.params.shell || "default";
 	const execOptions = {
 		cwd : action.params.workingDir || null
 	}
+	if (shell !== "default") execOptions.shell = shell;
 	const exitOnClose = (action.params.exitOnClose === true || action.params.exitOnClose === 'true')
 	
 	return new Promise((resolve,reject) => {
@@ -105,35 +107,6 @@ function _handleParams(param){
 		return param;
 }
 
-function executeWindowsScript(action) {
-	let command = action.params.COMMANDS
-	return new Promise((resolve,reject) => {
-		
-		var ls = child_process.exec(command, (error, stdout, stderr) => {
-			ls.stdout.on('data', function (data) {
-			console.log(data);
-			});
-			ls.stderr.on('data', function (data) {
-			console.log(data);
-			});
-			ls.on('close', function (code) {
-			if (code == 0)
-					console.log('Stop');
-			else
-					console.log('Start');
-			});
-			if (error) {
-				return reject(`exec error: ${error}`);
-			}
-			if (stderr) {
-				console.log(`stderr: ${stderr}`);
-			}
-			return resolve(stdout);
-		});
-	})
-};
-
-
 function _executeSingleCommand(command, options){
 	return new Promise((resolve,reject) => {
 		child_process.exec(command, options || {} ,(error, stdout, stderr) => {
@@ -177,7 +150,6 @@ function _getWindowsSessionId(){
 
 module.exports = {
 	execute:executeCMD,
-	executeWindowsScript:executeWindowsScript,
 	executeCommands:executeMultipleCmd,
 	remoteCommandExecute:remoteCommandExecute,
 	executeMultiple:executeMultiple,
