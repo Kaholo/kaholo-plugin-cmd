@@ -1,101 +1,120 @@
 {
   "name": "CommandLine",
   "type": "executer",
+  "description": "Kaholo plugin for executing cmd/shell commands.",
   "exposeRoute": false,
   "execProgram": "node",
   "main": "app.js",
-  "version": "2.0.1",
+  "imgUrl": "CommandLine.png",
+  "version": "3.0.0",
   "methods": [
     {
       "name": "execute",
-      "viewName": "execute command",
+      "viewName": "Execute Command",
       "params": [
         {
           "name": "workingDir",
           "viewName": "Working Directory",
-          "type": "string"
-        },
-        {
-          "name": "COMMANDS",
-          "viewName": "command",
-          "type": "string"
-        },
-        {
-          "name": "exitOnClose",
-          "viewName": "Wait for close",
-          "type": "boolean"
-        }
-      ]
-    },
-    {
-      "name": "executeWindowsScript",
-      "viewName": "execute Win Scripts",
-      "params": [
-        {
-          "name": "COMMANDS",
-          "viewName": "command",
-          "type": "string"
-        }
-      ],
-      "actionString": "COMMANDS"
-    },
-    {
-      "name": "executeCommands",
-      "viewName": "execute multiple commands",
-      "params": [
-        {
-          "name": "COMMANDS",
-          "viewName": "command",
-          "type": "text"
-        }
-      ],
-      "actionString": "COMMANDS"
-    },
-    {
-      "name": "remoteCommandExecute",
-      "viewName": "remote command execution",
-      "params": [
-        {
-          "name": "KEY_PATH",
-          "viewName": "Key Path",
-          "type": "string"
-        },
-        {
-          "name": "REMOTE_USER",
-          "viewName": "Remote User",
-          "type": "string"
-        },
-        {
-          "name": "REMOTE_ADDRESS",
-          "viewName": "Remote Address",
-          "type": "string"
-        },
-        {
-          "name": "port",
-          "viewName": "Port",
-          "type": "string"
+          "type": "string",
+          "description": "The directory to execute the command from."
         },
         {
           "name": "COMMANDS",
           "viewName": "Command",
-          "type": "string"
+          "type": "string",
+          "description": "The command to execute."
+        },
+        {
+          "name": "exitOnClose",
+          "viewName": "Wait For Close",
+          "type": "boolean",
+          "description": "If true wait until a 'close' event is emitted. If false waits until an 'exit' event is emitted instead."
+        },
+        {
+          "name": "shell",
+          "viewName": "Shell Type",
+          "type": "options",
+          "options": [
+            {
+              "id": "default",
+              "name": "Default"
+            },
+            {
+              "id": "/bin/sh",
+              "name": "sh"
+            },
+            {
+              "id": "/bin/bash",
+              "name": "bash"
+            }
+          ],
+          "description": "For linux specifies whether to use bin/sh or bin/bash as the shell. For windows only default cmd.exe is available."
         }
-      ],
-      "actionString": "ssh -i KEY_PATH REMOTE_USER@REMOTE_ADDRESS COMMANDS"
+      ]
     },
     {
-      "name": "executeMultiple",
-      "viewName": "execute command multiple times",
+      "name": "executeCommands",
+      "viewName": "Execute Multiple Commands",
       "params": [
         {
           "name": "COMMANDS",
-          "viewName": "command",
-          "type": "string"
+          "viewName": "Commands",
+          "type": "text",
+          "description": "The commands to execute. To enter multiple commands seperate each with a new line."
+        }
+      ]
+    },
+    {
+      "name": "remoteCommandExecute",
+      "viewName": "Remote Command Execution",
+      "params": [
+        {
+          "name": "KEY_PATH",
+          "viewName": "Key Path",
+          "type": "string",
+          "description": "The path of the key to use to authenticate with to remote server using SSH."
+        },
+        {
+          "name": "REMOTE_USER",
+          "viewName": "Remote User",
+          "type": "string",
+          "description": "The SSH username to use to authenticate to the remote host."
+        },
+        {
+          "name": "REMOTE_ADDRESS",
+          "viewName": "Remote Address",
+          "type": "string",
+          "description": "The URL of the host to execute the command on."
+        },
+        {
+          "name": "port",
+          "viewName": "Port",
+          "type": "string",
+          "description": "The port used to connect with SSH to the remote host."
+        },
+        {
+          "name": "COMMANDS",
+          "viewName": "Command",
+          "type": "string",
+          "description": "The command to execute on the remote host."
+        }
+      ]
+    },
+    {
+      "name": "executeMultiple",
+      "viewName": "Execute Command Multiple Times",
+      "params": [
+        {
+          "name": "COMMANDS",
+          "viewName": "Command",
+          "type": "string",
+          "description": "The command to execute."
         },
         {
           "name": "numberOfTime",
-          "viewName": "Number of time",
-          "type": "string"
+          "viewName": "Number Of Times",
+          "type": "string",
+          "description": "Number of times to execute the command."
         }
       ]
     },
@@ -106,15 +125,16 @@
         {
           "name": "command",
           "viewName": "Command",
-          "type": "string"
+          "type": "string",
+          "description": "The command to execute."
         },
         {
           "name": "workingDirectory",
           "viewName": "Working Directory",
-          "type": "string"
+          "type": "string",
+          "description": "If specified, execute the command from the specified directory."
         }
       ]
     }
-  ],
-  "imgUrl": "CommandLine.png"
+  ]
 }
