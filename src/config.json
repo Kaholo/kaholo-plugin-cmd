@@ -6,7 +6,7 @@
   "execProgram": "node",
   "main": "app.js",
   "imgUrl": "CommandLine.png",
-  "version": "3.0.1",
+  "version": "3.0.2",
   "category": "CORE",
   "keywords": ["CLI", "command", "commandline", "shell", "bash", "script", "code"],
   "methods": [
@@ -18,24 +18,28 @@
           "name": "workingDir",
           "viewName": "Working Directory",
           "type": "string",
-          "description": "The directory to execute the command from."
+          "description": "The path in which the command will be executed from.",
+          "placeholder": "/home/username/"
         },
         {
           "name": "COMMANDS",
           "viewName": "Command",
           "type": "string",
-          "description": "The command to execute."
+          "description": "The command to execute.",
+          "placeholder": "uptime"
         },
         {
           "name": "exitOnClose",
           "viewName": "Wait For Close",
           "type": "boolean",
-          "description": "If true wait until a 'close' event is emitted. If false waits until an 'exit' event is emitted instead."
+          "description": "Waiting until the operation is completed before moving on to the next operation."
         },
         {
           "name": "shell",
           "viewName": "Shell Type",
           "type": "options",
+          "description": "For linux specifies whether to use bin/sh or bin/bash as the shell. For windows only default cmd.exe is available.",
+          "placeholder": "bash",
           "options": [
             {
               "id": "default",
@@ -49,8 +53,7 @@
               "id": "/bin/bash",
               "name": "bash"
             }
-          ],
-          "description": "For linux specifies whether to use bin/sh or bin/bash as the shell. For windows only default cmd.exe is available."
+          ]
         }
       ]
     },
@@ -62,7 +65,8 @@
           "name": "COMMANDS",
           "viewName": "Commands",
           "type": "text",
-          "description": "The commands to execute. To enter multiple commands seperate each with a new line."
+          "description": "The commands to execute. To enter multiple commands seperate each with a new line.",
+          "placeholder": "uptime"
         }
       ]
     },
@@ -74,31 +78,36 @@
           "name": "KEY_PATH",
           "viewName": "Key Path",
           "type": "string",
-          "description": "The path of the key to use to authenticate with to remote server using SSH."
+          "description": "The path of the key to use to authenticate with to remote server using SSH.",
+          "placeholder": "/home/username/.ssh/id_rsa"
         },
         {
           "name": "REMOTE_USER",
           "viewName": "Remote User",
           "type": "string",
-          "description": "The SSH username to use to authenticate to the remote host."
+          "description": "The SSH username to use to authenticate to the remote host.",
+          "placeholder": "kaholo1"
         },
         {
           "name": "REMOTE_ADDRESS",
           "viewName": "Remote Address",
           "type": "string",
-          "description": "The URL of the host to execute the command on."
+          "description": "The URL of the host to execute the command on.",
+          "placeholder": "192.168.10.7"
         },
         {
           "name": "port",
           "viewName": "Port",
           "type": "string",
-          "description": "The port used to connect with SSH to the remote host."
+          "description": "The port used to connect with SSH to the remote host.",
+          "placeholder": "22"
         },
         {
           "name": "COMMANDS",
           "viewName": "Command",
           "type": "string",
-          "description": "The command to execute on the remote host."
+          "description": "The command to execute on the remote host.",
+          "placeholder": "uptime"
         }
       ]
     },
@@ -110,14 +119,15 @@
           "name": "COMMANDS",
           "viewName": "Command",
           "type": "string",
-          "description": "The command to execute."
+          "description": "The command to execute.",
+          "placeholder": "uptime"
         },
         {
           "name": "numberOfTime",
           "viewName": "Number Of Times",
           "type": "string",
           "description": "Number of times to execute the command.",
-          "placeholder": "2"
+          "placeholder": "5"
         }
       ]
     },
@@ -129,13 +139,15 @@
           "name": "command",
           "viewName": "Command",
           "type": "string",
-          "description": "The command to execute."
+          "description": "The command to execute.",
+          "placeholder": "uptime"
         },
         {
           "name": "workingDirectory",
           "viewName": "Working Directory",
           "type": "string",
-          "description": "If specified, execute the command from the specified directory."
+          "description": "If specified, execute the command from the specified directory.",
+          "placeholder": "c:\\\\work\\"
         }
       ]
     }
