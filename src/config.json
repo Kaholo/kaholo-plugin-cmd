@@ -6,7 +6,9 @@
   "execProgram": "node",
   "main": "app.js",
   "imgUrl": "CommandLine.png",
-  "version": "3.0.0",
+  "version": "3.0.1",
+  "category": "CORE",
+  "keywords": ["CLI", "command", "commandline", "shell", "bash", "script", "code"],
   "methods": [
     {
       "name": "execute",
@@ -114,7 +116,8 @@
           "name": "numberOfTime",
           "viewName": "Number Of Times",
           "type": "string",
-          "description": "Number of times to execute the command."
+          "description": "Number of times to execute the command.",
+          "placeholder": "2"
         }
       ]
     },
