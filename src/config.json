@@ -30,9 +30,20 @@
         },
         {
           "name": "exitOnClose",
-          "viewName": "Wait For Close",
-          "type": "boolean",
-          "description": "Waiting until the operation is completed before moving on to the next operation."
+          "viewName": "Finish Signal",
+          "type": "options",
+          "description": "Waiting until the operation is completed before moving on to the next operation. Default is Exit.",
+          "placeholder": "Exit",
+          "options": [
+            {
+              "id": "close",
+              "name": "Close"
+            },
+            {
+              "id": "exit",
+              "name": "Exit"
+            }
+          ]
         },
         {
           "name": "shell",

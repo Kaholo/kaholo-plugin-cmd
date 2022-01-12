@@ -7,7 +7,7 @@ Execute the specified command from shell.
 ### Parameters
 1. Working Directory (String) **Optional** - If specified, execute the command from the specified directory.
 2. Command (String) **Required** - The command to execute.
-3. Wait For Close (Boolean) **Optional** - If true wait until a 'close' event is emitted. If false waits until an 'exit' event is emitted instead. Default is false.
+3. Finish Signal (Options) **Optional** - If Close is selected wait until a 'close' event is emitted. If Exit is selected, waits until an 'exit' event is emitted instead. Default is Exit.
 4. Shell Type (Options) **Optional** - For linux specifies whether to use bin/sh or bin/bash as the shell. For windows only default cmd.exe is available. **Possible values: Default | sh | bash**.
 * For linux default shell is **sh**.
 * **Don't use sh or bash shell on Windows agents!**

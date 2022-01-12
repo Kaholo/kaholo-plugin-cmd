@@ -9,7 +9,7 @@ function executeCMD(action){
 		cwd : action.params.workingDir || null
 	}
 	if (shell !== "default") execOptions.shell = shell;
-	const exitOnClose = (action.params.exitOnClose === true || action.params.exitOnClose === 'true')
+	const exitOnClose = action.params.exitOnClose === "close";
 	
 	return new Promise((resolve,reject) => {
 		let stdout='', stderr='';
