@@ -6,7 +6,7 @@ Execute the specified command from shell.
 
 ### Parameters
 1. Working Directory (String) **Optional** - If specified, execute the command from the specified directory.
-2. Command (String) **Required** - The command to execute.
+2. Command (Text) **Required** - The command or commands to execute.  One line per one command, they will be executed sequentially regardless if the precegind command successfully executed.
 3. Finish Signal (Options) **Optional** - If Close is selected wait until a 'close' event is emitted. If Exit is selected, waits until an 'exit' event is emitted instead. Default is Exit.
 4. Shell Type (Options) **Optional** - For linux specifies whether to use bin/sh or bin/bash as the shell. For windows only default cmd.exe is available. **Possible values: Default | sh | bash**.
 * For linux default shell is **sh**.

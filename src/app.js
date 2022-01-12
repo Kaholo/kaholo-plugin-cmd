@@ -1,9 +1,10 @@
 const child_process = require("child_process");
 const path = require('path');
 const exec = require('ssh-exec');
+const { sanitizeCommand } = require("./helpers")
 
 function executeCMD(action){
-	const command = action.params.COMMANDS;
+	const command = sanitizeCommand(action.params.COMMANDS);
 	const shell = action.params.shell || "default";
 	const execOptions = {
 		cwd : action.params.workingDir || null
@@ -45,12 +46,6 @@ function executeCMD(action){
 		})
 
 	})
-}
-
-function executeMultipleCmd(action){
-	let commands = _handleParams(action.params.COMMANDS);
-	var commandArray = typeof commands == 'object' ? commands : commands.split('\n');
-	return _executeMultipleCommands(commandArray);
 }
 
 function remoteCommandExecute(action){
@@ -150,7 +145,6 @@ function _getWindowsSessionId(){
 
 module.exports = {
 	execute:executeCMD,
-	executeCommands:executeMultipleCmd,
 	remoteCommandExecute:remoteCommandExecute,
 	executeMultiple:executeMultiple,
 	executeInteractiveWindowsCommand: executeInteractiveWindowsCommand

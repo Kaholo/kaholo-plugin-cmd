@@ -6,7 +6,7 @@
   "execProgram": "node",
   "main": "app.js",
   "imgUrl": "CommandLine.png",
-  "version": "3.0.2",
+  "version": "3.0.3",
   "category": "CORE",
   "keywords": ["CLI", "command", "commandline", "shell", "bash", "script", "code"],
   "methods": [
@@ -24,8 +24,8 @@
         {
           "name": "COMMANDS",
           "viewName": "Command",
-          "type": "string",
-          "description": "The command to execute.",
+          "type": "text",
+          "description": "The command or commands to execute. One line per one command, they will be executed sequentially regardless if the precegind command successfully executed.",
           "placeholder": "uptime"
         },
         {
@@ -65,19 +65,6 @@
               "name": "bash"
             }
           ]
-        }
-      ]
-    },
-    {
-      "name": "executeCommands",
-      "viewName": "Execute Multiple Commands",
-      "params": [
-        {
-          "name": "COMMANDS",
-          "viewName": "Commands",
-          "type": "text",
-          "description": "The commands to execute. To enter multiple commands seperate each with a new line.",
-          "placeholder": "uptime"
         }
       ]
     },
