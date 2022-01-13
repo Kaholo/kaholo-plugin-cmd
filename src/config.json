@@ -25,7 +25,7 @@
           "name": "COMMANDS",
           "viewName": "Command",
           "type": "text",
-          "description": "The command or commands to execute. One line per one command, they will be executed sequentially regardless if the precegind command successfully executed.",
+          "description": "The command(s) to execute. When entering multiple commands, separate each with a new line. They will be executed sequentially regardless if the previous command was successfully executed.",
           "placeholder": "uptime"
         },
         {
