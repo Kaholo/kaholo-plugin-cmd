@@ -1,16 +1,16 @@
 const child_process = require("child_process");
 const path = require('path');
 const exec = require('ssh-exec');
-const { sanitizeCommand } = require("./helpers")
+const { joinCommand } = require("./helpers")
 
 function executeCMD(action){
-	const command = sanitizeCommand(action.params.COMMANDS);
+	const command = joinCommand(action.params.COMMANDS);
 	const shell = action.params.shell || "default";
 	const execOptions = {
 		cwd : action.params.workingDir || null
 	}
 	if (shell !== "default") execOptions.shell = shell;
-	const exitOnClose = action.params.exitOnClose === "close";
+	const finishSignal = action.params.finishSignal || "exit";
 	
 	return new Promise((resolve,reject) => {
 		let stdout='', stderr='';
@@ -30,13 +30,13 @@ function executeCMD(action){
 		})
 		
 		proc.on('close',(code, signal)=>{
-			if (exitOnClose){
+			if (finishSignal === 'close'){
 				return resolver(code,signal);
 			}
 		})
 
 		proc.on('exit',(code, signal)=>{
-			if (!exitOnClose){
+			if (finishSignal === 'exit'){
 				return resolver(code,signal);
 			}
 		})
