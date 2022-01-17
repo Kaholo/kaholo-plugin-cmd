@@ -6,7 +6,7 @@
   "execProgram": "node",
   "main": "app.js",
   "imgUrl": "CommandLine.png",
-  "version": "3.0.2",
+  "version": "3.0.4",
   "category": "CORE",
   "keywords": ["CLI", "command", "commandline", "shell", "bash", "script", "code"],
   "methods": [
@@ -24,15 +24,26 @@
         {
           "name": "COMMANDS",
           "viewName": "Command",
-          "type": "string",
-          "description": "The command to execute.",
-          "placeholder": "uptime"
+          "type": "text",
+          "description": "The command(s) to execute. When entering multiple commands, separate each with a new line. They will be executed sequentially regardless if the previous command was successfully executed.",
+          "placeholder": "ping example.com\necho 'Execution Completed'"
         },
         {
-          "name": "exitOnClose",
-          "viewName": "Wait For Close",
-          "type": "boolean",
-          "description": "Waiting until the operation is completed before moving on to the next operation."
+          "name": "finishSignal",
+          "viewName": "Finish Signal",
+          "type": "options",
+          "description": "Waiting until the operation is completed before moving on to the next operation. Default is Exit.",
+          "placeholder": "Exit",
+          "options": [
+            {
+              "id": "close",
+              "name": "Close"
+            },
+            {
+              "id": "exit",
+              "name": "Exit"
+            }
+          ]
         },
         {
           "name": "shell",
@@ -54,19 +65,6 @@
               "name": "bash"
             }
           ]
-        }
-      ]
-    },
-    {
-      "name": "executeCommands",
-      "viewName": "Execute Multiple Commands",
-      "params": [
-        {
-          "name": "COMMANDS",
-          "viewName": "Commands",
-          "type": "text",
-          "description": "The commands to execute. To enter multiple commands seperate each with a new line.",
-          "placeholder": "uptime"
         }
       ]
     },

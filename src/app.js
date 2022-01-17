@@ -1,15 +1,16 @@
 const child_process = require("child_process");
 const path = require('path');
 const exec = require('ssh-exec');
+const { joinCommand } = require("./helpers")
 
 function executeCMD(action){
-	const command = action.params.COMMANDS;
+	const command = joinCommand(action.params.COMMANDS);
 	const shell = action.params.shell || "default";
 	const execOptions = {
 		cwd : action.params.workingDir || null
 	}
 	if (shell !== "default") execOptions.shell = shell;
-	const exitOnClose = (action.params.exitOnClose === true || action.params.exitOnClose === 'true')
+	const finishSignal = action.params.finishSignal || "exit";
 	
 	return new Promise((resolve,reject) => {
 		let stdout='', stderr='';
@@ -29,13 +30,13 @@ function executeCMD(action){
 		})
 		
 		proc.on('close',(code, signal)=>{
-			if (exitOnClose){
+			if (finishSignal === 'close'){
 				return resolver(code,signal);
 			}
 		})
 
 		proc.on('exit',(code, signal)=>{
-			if (!exitOnClose){
+			if (finishSignal === 'exit'){
 				return resolver(code,signal);
 			}
 		})
@@ -45,12 +46,6 @@ function executeCMD(action){
 		})
 
 	})
-}
-
-function executeMultipleCmd(action){
-	let commands = _handleParams(action.params.COMMANDS);
-	var commandArray = typeof commands == 'object' ? commands : commands.split('\n');
-	return _executeMultipleCommands(commandArray);
 }
 
 function remoteCommandExecute(action){
@@ -150,7 +145,6 @@ function _getWindowsSessionId(){
 
 module.exports = {
 	execute:executeCMD,
-	executeCommands:executeMultipleCmd,
 	remoteCommandExecute:remoteCommandExecute,
 	executeMultiple:executeMultiple,
 	executeInteractiveWindowsCommand: executeInteractiveWindowsCommand
