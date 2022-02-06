@@ -149,6 +149,20 @@
           "placeholder": "c:\\\\work\\"
         }
       ]
+    },
+    {
+      "name": "executeScript",
+      "viewName": "Execute script at given path",
+      "params": [
+        {
+          "name": "path",
+          "viewName": "Path",
+          "type": "string",
+          "description": "Path to the script.",
+          "placeholder": "/home/user/script.sh",
+          "required": true
+        }
+      ]
     }
   ]
 }

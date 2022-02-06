@@ -1,7 +1,7 @@
 const child_process = require("child_process");
 const path = require('path');
 const exec = require('ssh-exec');
-const { joinCommand } = require("./helpers")
+const { joinCommand, pathExists, isFile, handleChildProcess, handleCommonErrors } = require("./helpers")
 
 function executeCMD(action){
 	const command = joinCommand(action.params.COMMANDS);
@@ -137,15 +137,28 @@ function _getWindowsSessionId(){
 
 		const sessionString = lines[1].split(",")[sessionColumn];
 		const sessionNumber = parseInt(sessionString.slice(1,-1));
-		if (sessionNumber == NaN) throw "Could not find session"
+		if (sessionNumxber == NaN) throw "Could not find session"
 
 		return sessionNumber;
 	})
+}
+
+async function executeScript({ params }) {
+  const { path } = params
+  // check if script exists
+  if (!await pathExists(path)) throw ERROR_MESSAGES.PATH_DOES_NOT_EXIST
+  // check if path is a file
+  if (!await isFile(path)) throw ERROR_MESSAGES.PATH_IS_NOT_FILE
+  // create child process
+  const proc = child_process.execFile(path)
+  // handle stderr & stdout output from child process
+  return await handleChildProcess(proc).catch(handleCommonErrors)
 }
 
 module.exports = {
 	execute:executeCMD,
 	remoteCommandExecute:remoteCommandExecute,
 	executeMultiple:executeMultiple,
-	executeInteractiveWindowsCommand: executeInteractiveWindowsCommand
+	executeInteractiveWindowsCommand: executeInteractiveWindowsCommand,
+  executeScript
 }
