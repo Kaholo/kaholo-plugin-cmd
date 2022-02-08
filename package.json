@@ -10,7 +10,6 @@
   "license": "ISC",
   "dependencies": {
     "child_process": "1.0.2",
-    "ssh-exec": "2.0.0",
     "ssh2": "^1.6.0"
   }
 }
