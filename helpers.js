@@ -12,7 +12,11 @@ function joinCommand(command) {
  * @returns {boolean}
  */
 async function pathExists(path) {
-  try { await access(path) } catch { return false }
+  try {
+    await access(path)
+  } catch {
+    return false
+  }
   return true
 }
 
@@ -45,11 +49,11 @@ function handleChildProcess(childProcess, options = {}) {
       if (options.verifyExitCode && code !== 0) rej({ msg: ERROR_MESSAGES.SCRIPT_FINISHED_WITH_ERROR, exitCode: code, output })
       else res(output)
     }
-    
+
     childProcess.stdout.on('data', (chunk) => chunks.push(chunk))
     childProcess.stderr.on('data', (chunk) => chunks.push(chunk))
 
-    if (options.finishSignal === 'close') childProcess.on('close', resolver)
+    if (options.finishSignal) childProcess.on(options.finishSignal, resolver)
     else childProcess.on('exit', resolver)
     childProcess.on('error', rej)
   })
@@ -60,8 +64,11 @@ function handleChildProcess(childProcess, options = {}) {
  * @param {Error} error
  */
 function handleCommonErrors(error) {
-  const message = error.message || String(error)
-  if (message.includes('EACCES')) throw ERROR_MESSAGES.SCRIPT_ACCESS_ERROR
+  const message = (error.message || String(error)).toLowerCase()
+  if (message.includes('eaccess')) throw ERROR_MESSAGES.SCRIPT_ACCESS_ERROR
+  if (message.includes('unsupported key format')) throw ERROR_MESSAGES.INVALID_PRIVATE_KEY
+  if (message.includes('configured authentication methods failed')) throw ERROR_MESSAGES.INCORRECT_PRIVATE_KEY
+  if (message.includes('econnrefused')) throw { msg: ERROR_MESSAGES.CONNECTION_REFUSED, error }
   throw error
 }
 
@@ -78,6 +85,7 @@ async function promiseQueue(promiseInitiators){
   return results
 }
 
+
 /**
  * Common errors messages
  */
@@ -86,8 +94,11 @@ const ERROR_MESSAGES = {
   SCRIPT_ACCESS_ERROR: 'Access to the script was denied. Make sure the file is executable.',
   PATH_IS_NOT_FILE: 'Given path is not a file.',
   SCRIPT_FINISHED_WITH_ERROR: 'Script finished with error.',
-  COMMAND_NOT_SPECIFIED: 'Command not specified',
-  SESSION_NOT_FOUND: 'Could not find session'
+  COMMAND_NOT_SPECIFIED: 'Command not specified.',
+  SESSION_NOT_FOUND: 'Could not find session.',
+  INVALID_PRIVATE_KEY: 'SSH Private Key is in the unsupported format.',
+  INCORRECT_PRIVATE_KEY: 'SSH Private Key is incorrect. Authentication failed.',
+  CONNECTION_REFUSED: 'Connection refused. Could not connect via SSH.'
 }
 
 module.exports = {

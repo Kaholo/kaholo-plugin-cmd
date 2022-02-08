@@ -1,7 +1,7 @@
 const childProcess = require("child_process");
 const path = require('path');
-const sshExec = require('ssh-exec');
-const { joinCommand, pathExists, isFile, handleChildProcess, handleCommonErrors, ERROR_MESSAGES, promiseQueue } = require("./helpers")
+const { joinCommand, pathExists, isFile, handleChildProcess, handleCommonErrors, ERROR_MESSAGES, promiseQueue } = require("./helpers");
+const { createSSHConnection, executeOverSSH } = require("./ssh.service");
 
 function execute({ params }){
 
@@ -19,22 +19,18 @@ function execute({ params }){
 	return handleChildProcess(proc, { verifyExitCode: true, finishSignal }).catch(handleCommonErrors)
 }
 
-function remoteCommandExecute({ params }){
-	const { REMOTE_USER, REMOTE_ADDRESS, PORT, KEY_PATH, COMMANDS } = params
+async function remoteCommandExecute({ params }){
+	const { host, port = 22, sshKey, cmd, user } = params
 
-	return new Promise((resolve,reject) => {
-		sshExec(COMMANDS, {
-			user: REMOTE_USER,
-			host: REMOTE_ADDRESS,
-			port: PORT,
-			key: KEY_PATH
-		}, (err, stdout, stderr) => {
-			if(err){
-				return reject({err, stderr});
-			}
-			else return resolve(stdout);
-		})
-	})
+	const sshClient = await createSSHConnection({
+		host,
+		port,
+		privateKey: Buffer.from(sshKey),
+		username: user
+	}).catch(handleCommonErrors)
+
+	return executeOverSSH(sshClient, joinCommand(cmd))
+
 }
 
 async function executeInteractiveWindowsCommand({ params }){
@@ -68,8 +64,8 @@ function executeMultiple({ params }){
 	return _executeMultipleCommands(commands);
 }
 
-function _executeSingleCommand(command, options){
-	const proc = childProcess.exec(command, options || {})
+function _executeSingleCommand(command, options = {}){
+	const proc = childProcess.exec(command, options)
 
 	return handleChildProcess(proc).catch(handleCommonErrors)
 }
