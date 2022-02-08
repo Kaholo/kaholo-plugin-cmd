@@ -7,9 +7,9 @@
   "execProgram": "node",
   "main": "app.js",
   "imgUrl": "CommandLine.png",
-  "version": "3.0.4",
+  "version": "3.1.0",
   "category": "CORE",
-  "keywords": ["CLI", "command", "commandline", "shell", "bash", "script", "code"],
+  "keywords": ["CLI", "command", "commandline", "shell", "bash", "script", "code", "cmd"],
   "methods": [
     {
       "name": "execute",
@@ -76,7 +76,7 @@
         {
           "name": "KEY_PATH",
           "viewName": "Key Path",
-          "type": "string",
+          "type": "vault",
           "description": "The path of the key to use to authenticate with to remote server using SSH.",
           "placeholder": "/home/username/.ssh/id_rsa"
         },
@@ -95,7 +95,7 @@
           "placeholder": "192.168.10.7"
         },
         {
-          "name": "port",
+          "name": "PORT",
           "viewName": "Port",
           "type": "string",
           "description": "The port used to connect with SSH to the remote host.",
@@ -152,7 +152,7 @@
     },
     {
       "name": "executeScript",
-      "viewName": "Execute script at given path",
+      "viewName": "Execute Script by Path",
       "params": [
         {
           "name": "path",

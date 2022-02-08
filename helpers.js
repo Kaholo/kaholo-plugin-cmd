@@ -2,7 +2,7 @@ const { ChildProcess } = require('node:child_process')
 const { access, lstat } = require('node:fs/promises')
 
 function joinCommand(command) {
-  const output = command.split('\n').map((item) => item.trim()).join('  ')
+  const output = command.split('\n').map((item) => item.trim()).join(' ; ')
   return output
 }
 
@@ -38,14 +38,17 @@ async function isFile(path) {
  * @returns {Promise<string>}
  */
 function handleChildProcess(childProcess, options = {}) {
+  const chunks = []
   return new Promise((res, rej) => {
     const resolver = (code) => {
-      if (options.verifyExitCode && code !== 0) rej(`${ERROR_MESSAGES.SCRIPT_FINISHED_WITH_ERROR} Code = ${code}.\n${chunks.join('')}`)
-      else res(chunks.join(''))
+      const output = chunks.join('')
+      if (options.verifyExitCode && code !== 0) rej({ msg: ERROR_MESSAGES.SCRIPT_FINISHED_WITH_ERROR, exitCode: code, output })
+      else res(output)
     }
-    const chunks = []
+    
     childProcess.stdout.on('data', (chunk) => chunks.push(chunk))
     childProcess.stderr.on('data', (chunk) => chunks.push(chunk))
+
     if (options.finishSignal === 'close') childProcess.on('close', resolver)
     else childProcess.on('exit', resolver)
     childProcess.on('error', rej)
@@ -63,13 +66,28 @@ function handleCommonErrors(error) {
 }
 
 /**
+ * Enqueues execution of promises
+ * @param {(() => Promise)[]} promiseInitiators 
+ */
+async function promiseQueue(promiseInitiators){
+  const results = []
+  for (let initiator of promiseInitiators) {
+    const result = await initiator.apply(initiator, [results, promiseInitiators.indexOf(initiator), results.length])
+    results.push(result)
+  }
+  return results
+}
+
+/**
  * Common errors messages
  */
 const ERROR_MESSAGES = {
   PATH_DOES_NOT_EXIST: 'Given path does not exist',
   SCRIPT_ACCESS_ERROR: 'Access to the script was denied. Make sure the file is executable.',
   PATH_IS_NOT_FILE: 'Given path is not a file.',
-  SCRIPT_FINISHED_WITH_ERROR: 'Script finished with error.'
+  SCRIPT_FINISHED_WITH_ERROR: 'Script finished with error.',
+  COMMAND_NOT_SPECIFIED: 'Command not specified',
+  SESSION_NOT_FOUND: 'Could not find session'
 }
 
 module.exports = {
@@ -78,5 +96,6 @@ module.exports = {
   isFile,
   handleChildProcess,
   handleCommonErrors,
-  ERROR_MESSAGES,
+  promiseQueue,
+  ERROR_MESSAGES
 }
