@@ -61,7 +61,7 @@ function handleChildProcess(childProcess, options = {}) {
     const resolver = (code) => {
       const output = chunks.join("");
       if (options.verifyExitCode && code !== 0) {
-        rej(new Error({ msg: ERROR_MESSAGES.SCRIPT_FINISHED_WITH_ERROR, exitCode: code, output }));
+        rej(new Error(`${ERROR_MESSAGES.SCRIPT_FINISHED_WITH_ERROR}\nCode = ${code}\nOutput=${output}`));
       } else res(output);
     };
 
@@ -81,10 +81,10 @@ function handleChildProcess(childProcess, options = {}) {
 function handleCommonErrors(error) {
   let message = (error.message || String(error)).toLowerCase();
   if (message.includes("eaccess")) message = ERROR_MESSAGES.SCRIPT_ACCESS_ERROR;
-  if (message.includes("unsupported key format")) message = ERROR_MESSAGES.INVALID_PRIVATE_KEY;
-  if (message.includes("configured authentication methods failed")) message = ERROR_MESSAGES.INCORRECT_PRIVATE_KEY;
-  if (message.includes("econnrefused")) message = ERROR_MESSAGES.CONNECTION_REFUSED;
-  throw new Error({ message, error });
+  else if (message.includes("unsupported key format")) message = ERROR_MESSAGES.INVALID_PRIVATE_KEY;
+  else if (message.includes("configured authentication methods failed")) message = ERROR_MESSAGES.INCORRECT_PRIVATE_KEY;
+  else if (message.includes("econnrefused")) message = ERROR_MESSAGES.CONNECTION_REFUSED;
+  throw new Error(message);
 }
 
 /**
