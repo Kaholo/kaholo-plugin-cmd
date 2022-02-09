@@ -2,7 +2,7 @@ const childProcess = require("child_process");
 const path = require("path");
 const {
   joinCommand, pathExists, isFile, handleChildProcess,
-  handleCommonErrors, ERROR_MESSAGES, promiseQueue,
+  handleCommonErrors, ERROR_MESSAGES, promiseQueue, readKeyFile,
 } = require("./helpers");
 const { createSSHConnection, executeOverSSH } = require("./ssh.service");
 
@@ -25,14 +25,19 @@ function execute({ params }) {
 
 async function remoteCommandExecute({ params }) {
   const {
-    host, port = 22, sshKey, cmd, user,
+    REMOTE_ADDRESS: host, port = 22, sshKey,
+    COMMANDS: cmd, REMOTE_USER: username, KEY_PATH: keyPath,
   } = params;
+
+  if (!sshKey && !keyPath) throw ERROR_MESSAGES.PRIVATE_KEY_REQUIRED;
+
+  const privateKey = sshKey ? Buffer.from(sshKey) : await readKeyFile(keyPath);
 
   const sshClient = await createSSHConnection({
     host,
     port,
-    privateKey: Buffer.from(sshKey),
-    username: user,
+    privateKey,
+    username,
   }).catch(handleCommonErrors);
 
   return executeOverSSH(sshClient, joinCommand(cmd));

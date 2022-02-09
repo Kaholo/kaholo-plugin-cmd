@@ -1,4 +1,4 @@
-const { access, lstat } = require("fs/promises");
+const { access, lstat, readFile } = require("fs/promises");
 
 /**
  * Common errors messages
@@ -13,6 +13,7 @@ const ERROR_MESSAGES = {
   INVALID_PRIVATE_KEY: "SSH Private Key is in the unsupported format.",
   INCORRECT_PRIVATE_KEY: "SSH Private Key is incorrect. Authentication failed.",
   CONNECTION_REFUSED: "Connection refused. Could not connect via SSH.",
+  PRIVATE_KEY_REQUIRED: "SSH Connection requires private key, pass the key from the vault or path to the file with key.",
 };
 
 function joinCommand(command) {
@@ -42,6 +43,12 @@ async function pathExists(path) {
 async function isFile(path) {
   const stat = await lstat(path);
   return stat.isFile();
+}
+
+async function readKeyFile(path) {
+  if (!await pathExists(path)) throw ERROR_MESSAGES.PATH_DOES_NOT_EXIST;
+  if (!await isFile(path)) throw ERROR_MESSAGES.PATH_IS_NOT_FILE;
+  return readFile(path, { encoding: "utf-8" });
 }
 
 /**
@@ -112,5 +119,6 @@ module.exports = {
   handleChildProcess,
   handleCommonErrors,
   promiseQueue,
+  readKeyFile,
   ERROR_MESSAGES,
 };
