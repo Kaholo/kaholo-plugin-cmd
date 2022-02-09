@@ -3,8 +3,8 @@ const path = require("path");
 const {
   joinCommand, pathExists, isFile, handleChildProcess,
   handleCommonErrors, ERROR_MESSAGES, promiseQueue, readKeyFile,
+  createSSHConnection, executeOverSSH,
 } = require("./helpers");
-const { createSSHConnection, executeOverSSH } = require("./ssh.service");
 
 function execute({ params }) {
   // destructure the params with default values
