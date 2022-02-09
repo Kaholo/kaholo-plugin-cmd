@@ -77,14 +77,14 @@
           "name": "sshKey",
           "viewName": "Private SSH key",
           "type": "vault",
-          "description": "Key to authenticate to remote server using SSH. You can use key from the vault or the key from the file.",
+          "description": "Key to authenticate to remote server using SSH. You can either take the key from the Vault here, or you can use the Private Key Path parameter.",
           "placeholder": "-----BEGIN OPENSSH PRIVATE KEY-----"
         },
         {
           "name": "KEY_PATH",
           "viewName": "Key Path",
           "type": "string",
-          "description": "The path of the key to use to authenticate with to remote server using SSH.",
+          "description": "The path of the key to use to authenticate with to remote server using SSH. You can either specify a file path here or use the Private Key parameter to take it from the Vault.",
           "placeholder": "/home/username/.ssh/id_rsa"
         },
         {
