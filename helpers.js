@@ -1,9 +1,23 @@
-const { ChildProcess } = require('node:child_process')
-const { access, lstat } = require('node:fs/promises')
+const { access, lstat } = require("fs/promises");
+
+/**
+ * Common errors messages
+ */
+const ERROR_MESSAGES = {
+  PATH_DOES_NOT_EXIST: "Given path does not exist",
+  SCRIPT_ACCESS_ERROR: "Access to the script was denied. Make sure the file is executable.",
+  PATH_IS_NOT_FILE: "Given path is not a file.",
+  SCRIPT_FINISHED_WITH_ERROR: "Script finished with error.",
+  COMMAND_NOT_SPECIFIED: "Command not specified.",
+  SESSION_NOT_FOUND: "Could not find session.",
+  INVALID_PRIVATE_KEY: "SSH Private Key is in the unsupported format.",
+  INCORRECT_PRIVATE_KEY: "SSH Private Key is incorrect. Authentication failed.",
+  CONNECTION_REFUSED: "Connection refused. Could not connect via SSH.",
+};
 
 function joinCommand(command) {
-  const output = command.split('\n').map((item) => item.trim()).join(' ; ')
-  return output
+  const output = command.split("\n").map((item) => item.trim()).join(" ; ");
+  return output;
 }
 
 /**
@@ -13,11 +27,11 @@ function joinCommand(command) {
  */
 async function pathExists(path) {
   try {
-    await access(path)
+    await access(path);
   } catch {
-    return false
+    return false;
   }
-  return true
+  return true;
 }
 
 /**
@@ -26,8 +40,8 @@ async function pathExists(path) {
  * @returns {boolean}
  */
 async function isFile(path) {
-  const stat = await lstat(path)
-  return stat.isFile()
+  const stat = await lstat(path);
+  return stat.isFile();
 }
 
 /**
@@ -37,26 +51,27 @@ async function isFile(path) {
  */
 /**
  * Handles the output of the child process
- * @param {ChildProcess} childProcess
+ * @param {import("child_process").ChildProcess} childProcess
  * @param {Options} options
  * @returns {Promise<string>}
  */
 function handleChildProcess(childProcess, options = {}) {
-  const chunks = []
+  const chunks = [];
   return new Promise((res, rej) => {
     const resolver = (code) => {
-      const output = chunks.join('')
-      if (options.verifyExitCode && code !== 0) rej({ msg: ERROR_MESSAGES.SCRIPT_FINISHED_WITH_ERROR, exitCode: code, output })
-      else res(output)
-    }
+      const output = chunks.join("");
+      if (options.verifyExitCode && code !== 0) {
+        rej(new Error({ msg: ERROR_MESSAGES.SCRIPT_FINISHED_WITH_ERROR, exitCode: code, output }));
+      } else res(output);
+    };
 
-    childProcess.stdout.on('data', (chunk) => chunks.push(chunk))
-    childProcess.stderr.on('data', (chunk) => chunks.push(chunk))
+    childProcess.stdout.on("data", (chunk) => chunks.push(chunk));
+    childProcess.stderr.on("data", (chunk) => chunks.push(chunk));
 
-    if (options.finishSignal) childProcess.on(options.finishSignal, resolver)
-    else childProcess.on('exit', resolver)
-    childProcess.on('error', rej)
-  })
+    if (options.finishSignal) childProcess.on(options.finishSignal, resolver);
+    else childProcess.on("exit", resolver);
+    childProcess.on("error", rej);
+  });
 }
 
 /**
@@ -64,41 +79,30 @@ function handleChildProcess(childProcess, options = {}) {
  * @param {Error} error
  */
 function handleCommonErrors(error) {
-  const message = (error.message || String(error)).toLowerCase()
-  if (message.includes('eaccess')) throw ERROR_MESSAGES.SCRIPT_ACCESS_ERROR
-  if (message.includes('unsupported key format')) throw ERROR_MESSAGES.INVALID_PRIVATE_KEY
-  if (message.includes('configured authentication methods failed')) throw ERROR_MESSAGES.INCORRECT_PRIVATE_KEY
-  if (message.includes('econnrefused')) throw { msg: ERROR_MESSAGES.CONNECTION_REFUSED, error }
-  throw error
+  let message = (error.message || String(error)).toLowerCase();
+  if (message.includes("eaccess")) message = ERROR_MESSAGES.SCRIPT_ACCESS_ERROR;
+  if (message.includes("unsupported key format")) message = ERROR_MESSAGES.INVALID_PRIVATE_KEY;
+  if (message.includes("configured authentication methods failed")) message = ERROR_MESSAGES.INCORRECT_PRIVATE_KEY;
+  if (message.includes("econnrefused")) message = ERROR_MESSAGES.CONNECTION_REFUSED;
+  throw new Error({ message, error });
 }
 
 /**
  * Enqueues execution of promises
- * @param {(() => Promise)[]} promiseInitiators 
+ * @param {(() => Promise)[]} promiseInitiators
  */
-async function promiseQueue(promiseInitiators){
-  const results = []
-  for (let initiator of promiseInitiators) {
-    const result = await initiator.apply(initiator, [results, promiseInitiators.indexOf(initiator), results.length])
-    results.push(result)
+async function promiseQueue(promiseInitiators) {
+  const results = [];
+  // TODO: Change the way of enqueueing the promises
+  /* eslint-disable */
+  for (const initiator of promiseInitiators) {
+    const result = await initiator.apply(
+      initiator, [results, promiseInitiators.indexOf(initiator), results.length]
+    );
+    results.push(result);
   }
-  return results
-}
-
-
-/**
- * Common errors messages
- */
-const ERROR_MESSAGES = {
-  PATH_DOES_NOT_EXIST: 'Given path does not exist',
-  SCRIPT_ACCESS_ERROR: 'Access to the script was denied. Make sure the file is executable.',
-  PATH_IS_NOT_FILE: 'Given path is not a file.',
-  SCRIPT_FINISHED_WITH_ERROR: 'Script finished with error.',
-  COMMAND_NOT_SPECIFIED: 'Command not specified.',
-  SESSION_NOT_FOUND: 'Could not find session.',
-  INVALID_PRIVATE_KEY: 'SSH Private Key is in the unsupported format.',
-  INCORRECT_PRIVATE_KEY: 'SSH Private Key is incorrect. Authentication failed.',
-  CONNECTION_REFUSED: 'Connection refused. Could not connect via SSH.'
+  /* eslint-enable */
+  return results;
 }
 
 module.exports = {
@@ -108,5 +112,5 @@ module.exports = {
   handleChildProcess,
   handleCommonErrors,
   promiseQueue,
-  ERROR_MESSAGES
-}
+  ERROR_MESSAGES,
+};
