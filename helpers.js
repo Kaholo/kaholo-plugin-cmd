@@ -47,8 +47,8 @@ async function isFile(path) {
 }
 
 async function readKeyFile(path) {
-  if (!await pathExists(path)) throw ERROR_MESSAGES.PATH_DOES_NOT_EXIST;
-  if (!await isFile(path)) throw ERROR_MESSAGES.PATH_IS_NOT_FILE;
+  if (!await pathExists(path)) { throw ERROR_MESSAGES.PATH_DOES_NOT_EXIST; }
+  if (!await isFile(path)) { throw ERROR_MESSAGES.PATH_IS_NOT_FILE; }
   return readFile(path, { encoding: "utf-8" });
 }
 
@@ -70,14 +70,15 @@ function handleChildProcess(childProcess, options = {}) {
       const output = chunks.join("");
       if (options.verifyExitCode && code !== 0) {
         rej(new Error(`${ERROR_MESSAGES.SCRIPT_FINISHED_WITH_ERROR}\nCode = ${code}\nOutput=${output}`));
-      } else res(output);
+      } else { res(output); }
     };
 
     childProcess.stdout.on("data", (chunk) => chunks.push(chunk));
     childProcess.stderr.on("data", (chunk) => chunks.push(chunk));
 
-    if (options.finishSignal) childProcess.on(options.finishSignal, resolver);
-    else childProcess.on("exit", resolver);
+    if (options.finishSignal) {
+      childProcess.on(options.finishSignal, resolver);
+    } else { childProcess.on("exit", resolver); }
     childProcess.on("error", rej);
   });
 }
@@ -88,10 +89,15 @@ function handleChildProcess(childProcess, options = {}) {
  */
 function handleCommonErrors(error) {
   let message = (error.message || String(error)).toLowerCase();
-  if (message.includes("eaccess")) message = ERROR_MESSAGES.SCRIPT_ACCESS_ERROR;
-  else if (message.includes("unsupported key format")) message = ERROR_MESSAGES.INVALID_PRIVATE_KEY;
-  else if (message.includes("configured authentication methods failed")) message = ERROR_MESSAGES.INCORRECT_PRIVATE_KEY;
-  else if (message.includes("econnrefused")) message = ERROR_MESSAGES.CONNECTION_REFUSED;
+  if (message.includes("eaccess")) {
+    message = ERROR_MESSAGES.SCRIPT_ACCESS_ERROR;
+  } else if (message.includes("unsupported key format")) {
+    message = ERROR_MESSAGES.INVALID_PRIVATE_KEY;
+  } else if (message.includes("configured authentication methods failed")) {
+    message = ERROR_MESSAGES.INCORRECT_PRIVATE_KEY;
+  } else if (message.includes("econnrefused")) {
+    message = ERROR_MESSAGES.CONNECTION_REFUSED;
+  }
   throw new Error(message);
 }
 
@@ -132,8 +138,12 @@ function createSSHConnection(connectConfig) {
 function executeOverSSH(sshClient, cmd, { endConnectionAfter = true } = {}) {
   return new Promise((res, rej) => {
     sshClient.exec(cmd, (error, channel) => {
-      if (error) return rej(error);
-      if (endConnectionAfter) channel.on("close", () => sshClient.end());
+      if (error) {
+        return rej(error);
+      }
+      if (endConnectionAfter) {
+        channel.on("close", () => sshClient.end());
+      }
 
       // handleChildProcess can be used here because the SSH Stream has the same
       // methods and the same events as the child process
