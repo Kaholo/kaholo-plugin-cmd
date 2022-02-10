@@ -7,9 +7,9 @@
   "execProgram": "node",
   "main": "app.js",
   "imgUrl": "CommandLine.png",
-  "version": "3.0.4",
+  "version": "3.1.1",
   "category": "CORE",
-  "keywords": ["CLI", "command", "commandline", "shell", "bash", "script", "code"],
+  "keywords": ["CLI", "command", "commandline", "shell", "bash", "script", "code", "cmd"],
   "methods": [
     {
       "name": "execute",
@@ -74,25 +74,34 @@
       "viewName": "Remote Command Execution",
       "params": [
         {
+          "name": "sshKey",
+          "viewName": "Private SSH key",
+          "type": "vault",
+          "description": "Key to authenticate to remote server using SSH. You can either take the key from the Vault here, or you can use the Private Key Path parameter.",
+          "placeholder": "-----BEGIN OPENSSH PRIVATE KEY-----"
+        },
+        {
           "name": "KEY_PATH",
           "viewName": "Key Path",
           "type": "string",
-          "description": "The path of the key to use to authenticate with to remote server using SSH.",
+          "description": "The path of the key to use to authenticate with to remote server using SSH. You can either specify a file path here or use the Private Key parameter to take it from the Vault.",
           "placeholder": "/home/username/.ssh/id_rsa"
         },
         {
           "name": "REMOTE_USER",
           "viewName": "Remote User",
           "type": "string",
-          "description": "The SSH username to use to authenticate to the remote host.",
-          "placeholder": "kaholo1"
+          "description": "The SSH username used to authenticate to the remote host.",
+          "placeholder": "kaholo1",
+          "required": true
         },
         {
           "name": "REMOTE_ADDRESS",
           "viewName": "Remote Address",
           "type": "string",
           "description": "The URL of the host to execute the command on.",
-          "placeholder": "192.168.10.7"
+          "placeholder": "192.168.10.7",
+          "required": true
         },
         {
           "name": "port",
@@ -104,9 +113,10 @@
         {
           "name": "COMMANDS",
           "viewName": "Command",
-          "type": "string",
-          "description": "The command to execute on the remote host.",
-          "placeholder": "uptime"
+          "type": "text",
+          "description": "The command(s) to execute on the remote host.",
+          "placeholder": "uptime",
+          "required": true
         }
       ]
     },
@@ -119,7 +129,8 @@
           "viewName": "Command",
           "type": "string",
           "description": "The command to execute.",
-          "placeholder": "uptime"
+          "placeholder": "uptime",
+          "required": true
         },
         {
           "name": "numberOfTime",
@@ -139,7 +150,8 @@
           "viewName": "Command",
           "type": "string",
           "description": "The command to execute.",
-          "placeholder": "uptime"
+          "placeholder": "uptime",
+          "required": true
         },
         {
           "name": "workingDirectory",
@@ -147,6 +159,20 @@
           "type": "string",
           "description": "If specified, execute the command from the specified directory.",
           "placeholder": "c:\\\\work\\"
+        }
+      ]
+    },
+    {
+      "name": "executeScript",
+      "viewName": "Execute Script by Path",
+      "params": [
+        {
+          "name": "path",
+          "viewName": "Path",
+          "type": "string",
+          "description": "Path to the script.",
+          "placeholder": "/home/user/script.sh",
+          "required": true
         }
       ]
     }
