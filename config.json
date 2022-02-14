@@ -7,7 +7,7 @@
   "execProgram": "node",
   "main": "app.js",
   "imgUrl": "CommandLine.png",
-  "version": "3.1.1",
+  "version": "3.1.2",
   "category": "CORE",
   "keywords": ["CLI", "command", "commandline", "shell", "bash", "script", "code", "cmd"],
   "methods": [
