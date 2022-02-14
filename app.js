@@ -9,8 +9,10 @@ const {
 function execute({ params }) {
   // destructure the params with default values
   const {
-    COMMANDS, workingDir, shell = "default", finishSignal = "exit",
+    COMMANDS, workingDir,
   } = params;
+  const shell = params.shell ?? "default";
+  const finishSignal = params.finishSignal ?? "exit";
 
   const command = joinCommand(COMMANDS);
   const execOptions = {
@@ -25,9 +27,10 @@ function execute({ params }) {
 
 async function remoteCommandExecute({ params }) {
   const {
-    REMOTE_ADDRESS: host, port = 22, sshKey,
+    REMOTE_ADDRESS: host, sshKey,
     COMMANDS: cmd, REMOTE_USER: username, KEY_PATH: keyPath,
   } = params;
+  const port = params.port ?? 22;
 
   if (!sshKey && !keyPath) { throw ERROR_MESSAGES.PRIVATE_KEY_REQUIRED; }
 
