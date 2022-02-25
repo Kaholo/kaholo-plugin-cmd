@@ -1,7 +1,9 @@
 # kaholo-plugin-cmd
 Kaholo plugin to execute commands from shell.
 
-**Note: Timeout errors may happen if the command runs interactively as it waits for an input. In this case, try adding a flag to run the command without interactive prompts.**
+**Note: Timeout errors may happen if the command runs interactively as it waits for an input. In this case, try adding a flag (-y) to run the command without interactive prompts.**
+
+**For example, if you need to install a package on the Kaholo agent, use bash command  ```apt install <package> -y``` (or use the interactive method for command execution).**
 
 ## Method: Execute Command
 Execute the specified command from shell. You can also run multiple commands that will be executed under the same context.
