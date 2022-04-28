@@ -88,6 +88,12 @@
           "placeholder": "/home/username/.ssh/id_rsa"
         },
         {
+          "name": "keyPassphrase",
+          "viewName": "Key passphrase",
+          "type": "vault",
+          "description": "Passphrase protecting the private key, set during key generation. Empty by default."
+        },
+        {
           "name": "REMOTE_USER",
           "viewName": "Remote User",
           "type": "string",
