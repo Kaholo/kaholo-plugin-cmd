@@ -27,8 +27,12 @@ function execute({ params }) {
 
 async function remoteCommandExecute({ params }) {
   const {
-    REMOTE_ADDRESS: host, sshKey,
-    COMMANDS: cmd, REMOTE_USER: username, KEY_PATH: keyPath,
+    REMOTE_ADDRESS: host,
+    sshKey,
+    COMMANDS: cmd,
+    REMOTE_USER: username,
+    KEY_PATH: keyPath,
+    keyPassphrase: passphrase,
   } = params;
   const port = params.port ?? 22;
 
@@ -41,6 +45,7 @@ async function remoteCommandExecute({ params }) {
     port,
     privateKey,
     username,
+    passphrase,
   }).catch(handleCommonErrors);
 
   return executeOverSSH(sshClient, joinCommand(cmd));
