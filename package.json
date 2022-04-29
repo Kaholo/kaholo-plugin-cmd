@@ -1,6 +1,5 @@
 {
   "name": "pm-plugin-commandline",
-  "version": "3.1.2",
   "description": "Simple command line tool",
   "main": "app.js",
   "scripts": {
@@ -11,7 +10,7 @@
   "license": "ISC",
   "dependencies": {
     "child_process": "1.0.2",
-    "ssh2": "^1.6.0"
+    "ssh2": "1.10.0"
   },
   "devDependencies": {
     "eslint": "^8.8.0",
