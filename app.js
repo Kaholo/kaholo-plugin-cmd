@@ -84,7 +84,7 @@ async function executeInteractiveWindowsCommand({ params }) {
   if (!command) { throw ERROR_MESSAGES.COMMAND_NOT_SPECIFIED; }
 
   const sessionId = await getWindowsSessionId();
-  const paexecPath = path.join(__dirname, "utils/paexec.exe");
+  const paexecPath = path.join(__dirname, "paexec.exe");
   const args = [
     paexecPath,
     "-s",

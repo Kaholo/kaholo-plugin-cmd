@@ -20,11 +20,13 @@ Execute the specified command from shell. You can also run multiple commands tha
 Execute the specified command on the shell of the specified remote host, using SSH.
 
 ### Parameters
-1. Key Path (String) **Required** - The path of the key to use to authenticate with to remote server using SSH.
-2. Remote User (String) **Required** - The SSH username to use to authenticate to the remote host.
-3. Remote Address (String) **Required** - The URL of the host to execute the command on.
-4. Port (String) **Optional** - The port used to connect with SSH to the remote host.
-5. Command (String) **Required** - The command to execute on the remote host.
+1. Private SSH key (Vault) - **Optional** - An SSH private key stored in the Kaholo vault.
+2. Key Path (String) - **Optional** - The path of the key to use to authenticate with to remote server using SSH.
+3. Key Passphrase (Vault) - **Optional** - The passphrase if the SHH key has one, stored in the Kaholo vault.
+4. Remote User (String) **Required** - The SSH username to use to authenticate to the remote host.
+5. Remote Address (String) **Required** - The URL of the host to execute the command on.
+6. Port (String) **Optional** - The port used to connect with SSH to the remote host.
+7. Command (String) **Required** - The command to execute on the remote host.
 
 ## Method: Execute Command Multiple Times
 Execute the given command for a specified number of times.
