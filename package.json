@@ -10,7 +10,7 @@
   "license": "ISC",
   "dependencies": {
     "child_process": "1.0.2",
-    "ssh2": "1.10.0"
+    "ssh2-1200-fix": "^1.11.1"
   },
   "devDependencies": {
     "eslint": "^8.8.0",
