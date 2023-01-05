@@ -1,5 +1,5 @@
 const { access, lstat, readFile } = require("fs/promises");
-const { Client } = require("ssh2");
+const { Client } = require("ssh2-1200-fix");
 
 /**
  * Common errors messages
