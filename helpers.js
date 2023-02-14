@@ -56,6 +56,7 @@ async function readKeyFile(path) {
  * @typedef {Object} Options
  * @property {boolean} verifyExitCode
  * @property {"exit" | "close"} finishSignal
+ * @property {Function} onProgress
  */
 /**
  * Handles the output of the child process
@@ -64,6 +65,7 @@ async function readKeyFile(path) {
  * @returns {Promise<string>}
  */
 function handleChildProcess(childProcess, options = {}) {
+  const onProgress = options.onProgress || console.info;
   const chunks = [];
   return new Promise((res, rej) => {
     const resolver = (code) => {
@@ -73,8 +75,16 @@ function handleChildProcess(childProcess, options = {}) {
       } else { res(output); }
     };
 
-    childProcess.stdout.on("data", (chunk) => chunks.push(chunk));
-    childProcess.stderr.on("data", (chunk) => chunks.push(chunk));
+    childProcess.stdout.on("data", (chunk) => {
+      chunks.push(chunk);
+
+      onProgress(chunk);
+    });
+    childProcess.stderr.on("data", (chunk) => {
+      chunks.push(chunk);
+
+      onProgress(chunk);
+    });
 
     if (options.finishSignal) {
       childProcess.on(options.finishSignal, resolver);
