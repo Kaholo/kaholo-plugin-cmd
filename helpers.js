@@ -47,8 +47,12 @@ async function isFile(path) {
 }
 
 async function readKeyFile(path) {
-  if (!await pathExists(path)) { throw ERROR_MESSAGES.PATH_DOES_NOT_EXIST; }
-  if (!await isFile(path)) { throw ERROR_MESSAGES.PATH_IS_NOT_FILE; }
+  if (!await pathExists(path)) {
+    throw ERROR_MESSAGES.PATH_DOES_NOT_EXIST;
+  }
+  if (!await isFile(path)) {
+    throw ERROR_MESSAGES.PATH_IS_NOT_FILE;
+  }
   return readFile(path, { encoding: "utf-8" });
 }
 
@@ -72,7 +76,9 @@ function handleChildProcess(childProcess, options = {}) {
       const output = chunks.join("");
       if (options.verifyExitCode && code !== 0) {
         rej(new Error(`${ERROR_MESSAGES.SCRIPT_FINISHED_WITH_ERROR}\nCode = ${code}\nOutput=${output}`));
-      } else { res(output); }
+      } else {
+        res(output);
+      }
     };
 
     childProcess.stdout.on("data", (chunk) => {
@@ -88,7 +94,9 @@ function handleChildProcess(childProcess, options = {}) {
 
     if (options.finishSignal) {
       childProcess.on(options.finishSignal, resolver);
-    } else { childProcess.on("exit", resolver); }
+    } else {
+      childProcess.on("exit", resolver);
+    }
     childProcess.on("error", rej);
   });
 }
@@ -136,7 +144,9 @@ async function promiseQueue(promiseInitiators) {
  */
 function createSSHConnection(connectConfig) {
   const sshClient = new Client();
-  return new Promise((res, rej) => { sshClient.connect(connectConfig).on("ready", () => res(sshClient)).on("error", rej); });
+  return new Promise((res, rej) => {
+    sshClient.connect(connectConfig).on("ready", () => res(sshClient)).on("error", rej);
+  });
 }
 
 /**
