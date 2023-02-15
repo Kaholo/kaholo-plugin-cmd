@@ -2,7 +2,7 @@
   "name": "CommandLine",
   "viewName": "Command Line",
   "type": "executer",
-  "description": "Executes cmd/shell commands",
+  "description": "Executes bin/sh, bin/bash, and cmd.exe commands",
   "exposeRoute": false,
   "execProgram": "node",
   "main": "app.js",
@@ -19,21 +19,21 @@
           "name": "workingDir",
           "viewName": "Working Directory",
           "type": "string",
-          "description": "The path in which the command will be executed from.",
-          "placeholder": "/home/username/"
+          "description": "The path from which the command will be executed",
+          "placeholder": "knoblix/test/results"
         },
         {
           "name": "COMMANDS",
           "viewName": "Command",
           "type": "text",
-          "description": "The command(s) to execute. When entering multiple commands, separate each with a new line. They will be executed sequentially regardless if the previous command was successfully executed. If command runs interactively, add flag (-y) to avoid timeout errors.",
+          "description": "The command(s) to execute, one command per line. Commands will be executed in sequence regardless of exit status of preceeding commands.",
           "placeholder": "ping example.com\necho 'Execution Completed'"
         },
         {
           "name": "finishSignal",
           "viewName": "Finish Signal",
           "type": "options",
-          "description": "Waiting until the operation is completed before moving on to the next operation. Default is Exit.",
+          "description": "Waits for exit event by default. Select Close to wait for a close event intead.",
           "placeholder": "Exit",
           "options": [
             {
@@ -50,7 +50,7 @@
           "name": "shell",
           "viewName": "Shell Type",
           "type": "options",
-          "description": "For linux specifies whether to use bin/sh or bin/bash as the shell. For windows only default cmd.exe is available.",
+          "description": "Uses /bin/sh by default. Select bash to use /bin/bash instead.",
           "placeholder": "bash",
           "options": [
             {
@@ -143,7 +143,9 @@
           "viewName": "Number Of Times",
           "type": "string",
           "description": "Number of times to execute the command.",
-          "placeholder": "5"
+          "default": "3",
+          "placeholder": "3",
+          "required": true
         }
       ]
     },
@@ -177,7 +179,7 @@
           "viewName": "Path",
           "type": "string",
           "description": "Path to the script.",
-          "placeholder": "/home/user/script.sh",
+          "placeholder": "prod/scripts/script01.sh",
           "required": true
         }
       ]
