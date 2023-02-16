@@ -1,23 +1,46 @@
-# kaholo-plugin-cmd
-Kaholo plugin to execute commands from shell.
+# Kaholo Command Line Plugin
+Execute commands using the standard linux Bourne (/bin/sh) or Bash (/bin/bash) shells or Windows cmd.exe on the Kaholo agent. These commands are executed locally on the Kaholo agent. To execute commands on remote machines please use the [Kaholo SSH plugin](https://github.com/Kaholo/kaholo-plugin-ssh/releases) instead. Method **Remote Command Execution** is intended only for backward compatibility with earlier versions of this plugin.
 
-**Note: Timeout errors may happen if the command runs interactively as it waits for an input. In this case, try adding a flag (-y) to run the command without interactive prompts.**
+**Note: Interactive commands should not be used. If a command prompts for user input during an execution it will wait until the pipeline execution times out or gets stopped. Default timeout is 10 minutes.**
 
-**For example, if you need to install a package on the Kaholo agent, use bash command  ```apt install <package> -y``` (or use the interactive method for command execution).**
+For example, do not run commands like `rm -r *`, but instead use `rm -rf *`. The extra `-f` causes the command to never prompt for confirmation.
+
+There is no need to `sudo` when using this plugin. All commands run on the Kaholo agent as user `root` already.
+
+The command will run by default in the default working directory on the Kaholo agent, e.g. `/twiddlebug/workspace`. If running in an alternative directory is useful, use the **Working Directory** parameter or accommodate that in the command. For example the following two configurations are equivalent:
+
+    Working Directory: (null)
+    Command: `rm -rf testresults/koda22/*`
+
+    Working Directory: `testresults/koda22`
+    Command: `rm -rf *`
+
+Both configurations delete everything in directory `/twiddlebug/workspace/testresults/koda22` on the Kaholo Agent.
+
+Commonly used command examples:
+* Install a tool on the Kaholo agent (Alpine Linux): `apk add maven`
+* List files in the Kaholo Agent default working directory: `ls -la`
+* Pause the pipeline for 30 seconds: `sleep 30`
+* Expose a link in Kaholo Final Results: echo `"<a href=\"http://34.88.170.156:8081\" target=\"_blank\">Pet Clinic App</a><br>"`
+* Downloading files: `wget https://github.com/PowerShell/v7.3.2/powershell-7.3.2-linux-alpine-x64.tar.gz`
+* Running a CLI tool (must be installed on Kaholo Agent) for which there is no Kaholo plugin: `puppet apply environments/production/manifests/site.pp`
 
 ## Method: Execute Command
 Execute the specified command from shell. You can also run multiple commands that will be executed under the same context.
 
-### Parameters
-1. Working Directory (String) **Optional** - If specified, execute the command from the specified directory.
-2. Command (Text) **Required** - The command or commands to execute. When entering multiple commands, seperate each command with a new line. The commands will be executed sequentially regardless if the previous command was successfully executed or not.
-3. Finish Signal (Options) **Optional** - If Close is selected, waits until a 'close' event is emitted. If Exit is selected, waits until an 'exit' event is emitted instead. **Default value is Exit**.
-4. Shell Type (Options) **Optional** - For linux, specifies whether to use bin/sh or bin/bash as the shell. For Windows, only default cmd.exe is available. **Possible values: Default | sh | bash**.
-* For linux, default shell is **sh**.
-* **Don't use sh or bash shell on Windows agents!**
+### Parameter: Working Directory ###
+If a directory on the Kaholo agent is specified, either relative to default or absolute, the command is executed in the specified directory.
+### Parameter: Command ###
+The command or commands to execute. Entering one command on each line. The commands will be executed sequentially regardless the outcome of previous commands.
+
+### Parameter: Finish Signal ###
+By default the plugin waits until the shell emits an exit event. To wait for a close event, select **Close** instead.
+
+### Parameter: Shell Type ###
+For linux the default shell is `/bin/sh`. Use this parameter to select `/bin/bash` or `cmd.exe` (Windows Agents only) instead, if required.
 
 ## Method: Remote Command Execution
-Execute the specified command on the shell of the specified remote host, using SSH.
+**This method is deprecated** in favor of the [Kaholo SSH plugin](https://github.com/Kaholo/kaholo-plugin-ssh/releases). It is provided and works as before for backward compatibility purposes only.
 
 ### Parameters
 1. Private SSH key (Vault) - **Optional** - An SSH private key stored in the Kaholo vault.
@@ -31,13 +54,22 @@ Execute the specified command on the shell of the specified remote host, using S
 ## Method: Execute Command Multiple Times
 Execute the given command for a specified number of times.
 
-### Parameters
-1. Command (String) **Required** - The command to execute.
-2. Number Of Times (String) **Required** - Number of times to execute the command.
+### Parameter: Command
+The command to execute.
 
-## Method: Execute windows interactive
-Execute desktop interactive commands while running an agent as a Windows service.
+### Parameter: Number of Times
+The number of times to execute the command.
 
-### Parameters
-1. Command (String) **Required** - The command to execute.
-2. Working Directory (String) **Optional** - If specified, execute the command from the specified directory.
+## Method: Execute Windows Desktop commands
+(Windows agents only) Execute interactive desktop commands while running an agent as a Windows service.
+
+### Parameter: Command
+The command to execute.
+### Parameter: Working Directory
+If specified, execute the command from the specified directory.
+
+## Method: Execute Script by Path
+If an executable script already exists on the agent, provide the path to the script and this method will execute it. A common way to place a script on the Kaholo Agent is the Git Plugin (clone a repository) or the Text File Plugin, which can write a provided script to a file.
+
+### Parameter: Path
+The path on the Kaholo Agent to the script to execute.

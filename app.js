@@ -18,7 +18,9 @@ function execute({ params }) {
   const execOptions = {
     cwd: workingDir || null,
   };
-  if (shell !== "default") { execOptions.shell = shell; }
+  if (shell !== "default") {
+    execOptions.shell = shell;
+  }
 
   const proc = childProcess.exec(command, execOptions);
 
@@ -36,7 +38,9 @@ async function remoteCommandExecute({ params }) {
   } = params;
   const port = params.port ?? 22;
 
-  if (!sshKey && !keyPath) { throw ERROR_MESSAGES.PRIVATE_KEY_REQUIRED; }
+  if (!sshKey && !keyPath) {
+    throw ERROR_MESSAGES.PRIVATE_KEY_REQUIRED;
+  }
 
   const privateKey = sshKey ? Buffer.from(sshKey) : await readKeyFile(keyPath);
 
@@ -69,11 +73,15 @@ async function getWindowsSessionId() {
   const columns = lines[0].split(",");
   const sessionColumn = columns.findIndex((col) => col === "\"Session#\"");
 
-  if (sessionColumn === -1) { throw ERROR_MESSAGES.SESSION_NOT_FOUND; }
+  if (sessionColumn === -1) {
+    throw ERROR_MESSAGES.SESSION_NOT_FOUND;
+  }
 
   const sessionString = lines[1].split(",")[sessionColumn];
   const sessionNumber = parseInt(sessionString.slice(1, -1), 10);
-  if (Number.isNaN(sessionNumber)) { throw ERROR_MESSAGES.SESSION_NOT_FOUND; }
+  if (Number.isNaN(sessionNumber)) {
+    throw ERROR_MESSAGES.SESSION_NOT_FOUND;
+  }
 
   return sessionNumber;
 }
@@ -81,7 +89,9 @@ async function getWindowsSessionId() {
 async function executeInteractiveWindowsCommand({ params }) {
   const { command, workingDirectory } = params;
 
-  if (!command) { throw ERROR_MESSAGES.COMMAND_NOT_SPECIFIED; }
+  if (!command) {
+    throw ERROR_MESSAGES.COMMAND_NOT_SPECIFIED;
+  }
 
   const sessionId = await getWindowsSessionId();
   const paexecPath = path.join(__dirname, "paexec.exe");
@@ -111,9 +121,13 @@ function executeMultiple({ params }) {
 async function executeScript({ params }) {
   const { path: scriptPath } = params;
   // check if script exists
-  if (!await pathExists(scriptPath)) { throw ERROR_MESSAGES.PATH_DOES_NOT_EXIST; }
+  if (!await pathExists(scriptPath)) {
+    throw ERROR_MESSAGES.PATH_DOES_NOT_EXIST;
+  }
   // check if path is a file
-  if (!await isFile(scriptPath)) { throw ERROR_MESSAGES.PATH_IS_NOT_FILE; }
+  if (!await isFile(scriptPath)) {
+    throw ERROR_MESSAGES.PATH_IS_NOT_FILE;
+  }
   // create child process
   const proc = childProcess.execFile(scriptPath);
   // handle stderr & stdout output from child process
