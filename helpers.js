@@ -69,7 +69,7 @@ async function readKeyFile(path) {
  * @returns {Promise<string>}
  */
 function handleChildProcess(childProcess, options = {}) {
-  const onProgress = options.onProgress || console.info;
+  const onProgress = options.onProgress || process.stdout.write.bind(process.stdout);
   const chunks = [];
   return new Promise((res, rej) => {
     const resolver = (code) => {
