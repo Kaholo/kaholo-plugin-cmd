@@ -69,35 +69,26 @@ async function readKeyFile(path) {
  * @returns {Promise<string>}
  */
 function handleChildProcess(childProcess, options = {}) {
-  const onProgress = options.onProgress || process.stdout.write.bind(process.stdout);
   const chunks = [];
+
+  childProcess.stdout.on("data", (chunk) => {
+    chunks.push(chunk);
+    process.stdout.write(chunk);
+  });
+  childProcess.stderr.on("data", (chunk) => {
+    chunks.push(chunk);
+    process.stderr.write(chunk);
+  });
+
   return new Promise((res, rej) => {
-    const resolver = (code) => {
-      const output = chunks.join("");
-      if (options.verifyExitCode && code !== 0) {
-        rej(new Error(`${ERROR_MESSAGES.SCRIPT_FINISHED_WITH_ERROR}\nCode = ${code}\nOutput=${output}`));
-      } else {
-        res(output);
-      }
-    };
-
-    childProcess.stdout.on("data", (chunk) => {
-      chunks.push(chunk);
-
-      onProgress(chunk);
-    });
-    childProcess.stderr.on("data", (chunk) => {
-      chunks.push(chunk);
-
-      onProgress(chunk);
-    });
-
-    if (options.finishSignal) {
-      childProcess.on(options.finishSignal, resolver);
-    } else {
-      childProcess.on("exit", resolver);
-    }
     childProcess.on("error", rej);
+    childProcess.on(options.finishSignal ?? "exit", (code) => {
+      if (options.verifyExitCode && code !== 0) {
+        rej(new Error(`${ERROR_MESSAGES.SCRIPT_FINISHED_WITH_ERROR}\nCode = ${code}`));
+      } else {
+        res(chunks);
+      }
+    });
   });
 }
 
@@ -129,7 +120,8 @@ async function promiseQueue(promiseInitiators) {
   /* eslint-disable */
   for (const initiator of promiseInitiators) {
     const result = await initiator.apply(
-      initiator, [results, promiseInitiators.indexOf(initiator), results.length]
+      initiator,
+      [results, promiseInitiators.indexOf(initiator), results.length],
     );
     results.push(result);
   }
@@ -155,7 +147,13 @@ function createSSHConnection(connectConfig) {
  * @param {string} cmd
  * @param {{ endConnectionAfter: boolean }} options
  */
-function executeOverSSH(sshClient, cmd, { endConnectionAfter = true } = {}) {
+function executeOverSSH(
+  sshClient,
+  cmd,
+  {
+    endConnectionAfter = true,
+  } = {},
+) {
   return new Promise((res, rej) => {
     sshClient.exec(cmd, (error, channel) => {
       if (error) {
@@ -172,12 +170,33 @@ function executeOverSSH(sshClient, cmd, { endConnectionAfter = true } = {}) {
   });
 }
 
+function handleCommandOutput(chunks) {
+  const jsonChunks = chunks.map(tryParseJson).filter((v) => v !== undefined);
+
+  if (jsonChunks.length === 0) {
+    return "";
+  }
+  if (jsonChunks.length === 1) {
+    return jsonChunks[0];
+  }
+  return jsonChunks;
+}
+
+function tryParseJson(value) {
+  try {
+    return JSON.parse(value);
+  } catch {
+    return undefined;
+  }
+}
+
 module.exports = {
   joinCommand,
   pathExists,
   isFile,
   handleChildProcess,
   handleCommonErrors,
+  handleCommandOutput,
   promiseQueue,
   readKeyFile,
   createSSHConnection,
