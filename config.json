@@ -14,6 +14,7 @@
     {
       "name": "execute",
       "viewName": "Execute Command",
+      "allowEmptyResult": true,
       "params": [
         {
           "name": "workingDir",
@@ -72,6 +73,7 @@
     {
       "name": "remoteCommandExecute",
       "viewName": "Remote Command Execution",
+      "allowEmptyResult": true,
       "params": [
         {
           "name": "sshKey",
@@ -129,6 +131,7 @@
     {
       "name": "executeMultiple",
       "viewName": "Execute Command Multiple Times",
+      "allowEmptyResult": true,
       "params": [
         {
           "name": "COMMANDS",
@@ -152,6 +155,7 @@
     {
       "name": "executeInteractiveWindowsCommand",
       "viewName": "Execute windows interactive",
+      "allowEmptyResult": true,
       "params": [
         {
           "name": "command",
@@ -173,6 +177,7 @@
     {
       "name": "executeScript",
       "viewName": "Execute Script by Path",
+      "allowEmptyResult": true,
       "params": [
         {
           "name": "path",
