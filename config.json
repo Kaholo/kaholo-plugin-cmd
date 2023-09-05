@@ -27,7 +27,7 @@
           "name": "COMMANDS",
           "viewName": "Command",
           "type": "text",
-          "description": "The command(s) to execute, one command per line. Commands will be executed in sequence regardless of exit status of preceeding commands.",
+          "description": "The command to execute.",
           "placeholder": "ping example.com\necho 'Execution Completed'"
         },
         {
@@ -122,7 +122,7 @@
           "name": "COMMANDS",
           "viewName": "Command",
           "type": "text",
-          "description": "The command(s) to execute on the remote host.",
+          "description": "The command to execute on the remote host.",
           "placeholder": "uptime",
           "required": true
         }

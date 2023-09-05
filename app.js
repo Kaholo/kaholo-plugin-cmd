@@ -1,20 +1,26 @@
 const childProcess = require("child_process");
 const path = require("path");
 const {
-  joinCommand, pathExists, isFile, handleChildProcess,
-  handleCommonErrors, ERROR_MESSAGES, promiseQueue, readKeyFile,
-  createSSHConnection, executeOverSSH, handleCommandOutput,
+  pathExists,
+  isFile,
+  handleChildProcess,
+  handleCommonErrors,
+  ERROR_MESSAGES,
+  promiseQueue,
+  readKeyFile,
+  createSSHConnection,
+  executeOverSSH,
+  handleCommandOutput,
 } = require("./helpers");
 
 async function execute({ params }) {
-  // destructure the params with default values
   const {
-    COMMANDS, workingDir,
+    COMMANDS: command,
+    workingDir,
   } = params;
   const shell = params.shell ?? "default";
   const finishSignal = params.finishSignal ?? "exit";
 
-  const command = joinCommand(COMMANDS);
   const execOptions = {
     cwd: workingDir || null,
   };
@@ -57,7 +63,7 @@ async function remoteCommandExecute({ params }) {
     passphrase,
   }).catch(handleCommonErrors);
 
-  const chunks = await executeOverSSH(sshClient, joinCommand(cmd));
+  const chunks = await executeOverSSH(sshClient, cmd);
   return handleCommandOutput(chunks);
 }
 
