@@ -1,20 +1,26 @@
 const childProcess = require("child_process");
 const path = require("path");
 const {
-  joinCommand, pathExists, isFile, handleChildProcess,
-  handleCommonErrors, ERROR_MESSAGES, promiseQueue, readKeyFile,
-  createSSHConnection, executeOverSSH,
+  pathExists,
+  isFile,
+  handleChildProcess,
+  handleCommonErrors,
+  ERROR_MESSAGES,
+  promiseQueue,
+  readKeyFile,
+  createSSHConnection,
+  executeOverSSH,
+  handleCommandOutput,
 } = require("./helpers");
 
-function execute({ params }) {
-  // destructure the params with default values
+async function execute({ params }) {
   const {
-    COMMANDS, workingDir,
+    COMMANDS: command,
+    workingDir,
   } = params;
   const shell = params.shell ?? "default";
   const finishSignal = params.finishSignal ?? "exit";
 
-  const command = joinCommand(COMMANDS);
   const execOptions = {
     cwd: workingDir || null,
   };
@@ -24,7 +30,12 @@ function execute({ params }) {
 
   const proc = childProcess.exec(command, execOptions);
 
-  return handleChildProcess(proc, { verifyExitCode: true, finishSignal }).catch(handleCommonErrors);
+  const chunks = await handleChildProcess(proc, {
+    verifyExitCode: true,
+    finishSignal,
+  }).catch(handleCommonErrors);
+
+  return handleCommandOutput(chunks);
 }
 
 async function remoteCommandExecute({ params }) {
@@ -52,18 +63,22 @@ async function remoteCommandExecute({ params }) {
     passphrase,
   }).catch(handleCommonErrors);
 
-  return executeOverSSH(sshClient, joinCommand(cmd));
+  const chunks = await executeOverSSH(sshClient, cmd);
+  return handleCommandOutput(chunks);
 }
 
-function executeSingleCommand(command, options = {}) {
+async function executeSingleCommand(command, options = {}) {
   const proc = childProcess.exec(command, options);
 
-  return handleChildProcess(proc).catch(handleCommonErrors);
+  const chunks = await handleChildProcess(proc).catch(handleCommonErrors);
+  return handleCommandOutput(chunks);
 }
 
 function executeMultipleCommands(commands) {
   return promiseQueue(
-    commands.map((command) => () => executeSingleCommand(command)),
+    commands.map((command) => (
+      () => executeSingleCommand(command)
+    )),
   );
 }
 
@@ -131,7 +146,8 @@ async function executeScript({ params }) {
   // create child process
   const proc = childProcess.execFile(scriptPath);
   // handle stderr & stdout output from child process
-  return handleChildProcess(proc).catch(handleCommonErrors);
+  const chunks = await handleChildProcess(proc).catch(handleCommonErrors);
+  return handleCommandOutput(chunks);
 }
 
 module.exports = {
