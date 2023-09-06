@@ -2,14 +2,23 @@
   "name": "CommandLine",
   "viewName": "Command Line",
   "type": "executer",
-  "description": "Executes bin/sh, bin/bash, and cmd.exe commands",
+  "description": "Execute bin/sh, bin/bash, and cmd.exe commands and scripts",
   "exposeRoute": false,
   "execProgram": "node",
   "main": "app.js",
   "imgUrl": "logo.png",
-  "version": "3.2.0",
+  "version": "3.2.1",
   "category": "Basic Tools",
-  "keywords": ["CLI", "command", "commandline", "shell", "bash", "script", "code", "cmd"],
+  "keywords": [
+    "cli",
+    "command",
+    "commandline",
+    "shell",
+    "bash",
+    "script",
+    "code",
+    "cmd"
+  ],
   "methods": [
     {
       "name": "execute",
@@ -27,7 +36,7 @@
           "name": "COMMANDS",
           "viewName": "Command",
           "type": "text",
-          "description": "The command to execute.",
+          "description": "The command to execute",
           "placeholder": "ping example.com\necho 'Execution Completed'"
         },
         {
@@ -36,6 +45,7 @@
           "type": "options",
           "description": "Waits for exit event by default. Select Close to wait for a close event intead.",
           "placeholder": "Exit",
+          "default": "exit",
           "options": [
             {
               "id": "close",
@@ -51,8 +61,9 @@
           "name": "shell",
           "viewName": "Shell Type",
           "type": "options",
-          "description": "Uses /bin/sh by default. Select bash to use /bin/bash instead.",
+          "description": "Uses Kaholo agent's default shell if not specified",
           "placeholder": "bash",
+          "default": "default",
           "options": [
             {
               "id": "default",
@@ -79,27 +90,28 @@
           "name": "sshKey",
           "viewName": "Private SSH key",
           "type": "vault",
-          "description": "Key to authenticate to remote server using SSH. You can either take the key from the Vault here, or you can use the Private Key Path parameter.",
-          "placeholder": "-----BEGIN OPENSSH PRIVATE KEY-----"
+          "description": "SSH key used to authenticate with remote server - use either this or Key Path parameter.",
+          "placeholder": "my vaulted SSH key"
         },
         {
           "name": "KEY_PATH",
           "viewName": "Key Path",
           "type": "string",
-          "description": "The path of the key to use to authenticate with to remote server using SSH. You can either specify a file path here or use the Private Key parameter to take it from the Vault.",
-          "placeholder": "/home/username/.ssh/id_rsa"
+          "description": "The path on Kaholo Agent to SSH key used to authenticate with remote server - use either this or Private SSH Key parameter.",
+          "placeholder": "temp/id_rsa"
         },
         {
           "name": "keyPassphrase",
           "viewName": "Key passphrase",
           "type": "vault",
-          "description": "Passphrase protecting the private key, set during key generation. Empty by default."
+          "description": "Passphrase if one used to protect the private key, empty by default",
+          "placeholder": "my vaulted passphrase"
         },
         {
           "name": "REMOTE_USER",
           "viewName": "Remote User",
           "type": "string",
-          "description": "The SSH username used to authenticate to the remote host.",
+          "description": "The SSH username used to authenticate to the remote host",
           "placeholder": "kaholo1",
           "required": true
         },
@@ -107,7 +119,7 @@
           "name": "REMOTE_ADDRESS",
           "viewName": "Remote Address",
           "type": "string",
-          "description": "The URL of the host to execute the command on.",
+          "description": "The hostname or IP of the host on which to execute the command",
           "placeholder": "192.168.10.7",
           "required": true
         },
@@ -115,14 +127,14 @@
           "name": "port",
           "viewName": "Port",
           "type": "string",
-          "description": "The port used to connect with SSH to the remote host.",
+          "description": "The port used to connect with SSH to the remote host",
           "placeholder": "22"
         },
         {
           "name": "COMMANDS",
           "viewName": "Command",
           "type": "text",
-          "description": "The command to execute on the remote host.",
+          "description": "The command to execute on the remote host",
           "placeholder": "uptime",
           "required": true
         }
@@ -137,7 +149,7 @@
           "name": "COMMANDS",
           "viewName": "Command",
           "type": "string",
-          "description": "The command to execute.",
+          "description": "The command to execute",
           "placeholder": "uptime",
           "required": true
         },
@@ -145,7 +157,7 @@
           "name": "numberOfTime",
           "viewName": "Number Of Times",
           "type": "string",
-          "description": "Number of times to execute the command.",
+          "description": "Number of times to execute the command",
           "default": "3",
           "placeholder": "3",
           "required": true
@@ -161,7 +173,7 @@
           "name": "command",
           "viewName": "Command",
           "type": "string",
-          "description": "The command to execute.",
+          "description": "The command to execute",
           "placeholder": "uptime",
           "required": true
         },
@@ -169,7 +181,7 @@
           "name": "workingDirectory",
           "viewName": "Working Directory",
           "type": "string",
-          "description": "If specified, execute the command from the specified directory.",
+          "description": "If specified, execute the command from the specified directory",
           "placeholder": "c:\\\\work\\"
         }
       ]
@@ -183,7 +195,7 @@
           "name": "path",
           "viewName": "Path",
           "type": "string",
-          "description": "Path to the script.",
+          "description": "Path to the script",
           "placeholder": "prod/scripts/script01.sh",
           "required": true
         }
