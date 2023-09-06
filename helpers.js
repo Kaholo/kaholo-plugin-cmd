@@ -17,11 +17,6 @@ const ERROR_MESSAGES = {
   PRIVATE_KEY_REQUIRED: "SSH Connection requires private key, pass the key from the vault or path to the file with key.",
 };
 
-function joinCommand(command) {
-  const output = command.split("\n").map((item) => item.trim()).join(" ; ");
-  return output;
-}
-
 /**
  * Checks if given path exists
  * @param {string} path
@@ -191,7 +186,6 @@ function tryParseJson(value) {
 }
 
 module.exports = {
-  joinCommand,
   pathExists,
   isFile,
   handleChildProcess,
