@@ -92,16 +92,17 @@ function handleChildProcess(childProcess, options = {}) {
  * @param {Error} error
  */
 function handleCommonErrors(error) {
-  let message = (error.message || String(error)).toLowerCase();
-  if (message.includes("eaccess")) {
+  let message = "";
+  if (/^EACCES/i.test(message)) {
     message = ERROR_MESSAGES.SCRIPT_ACCESS_ERROR;
   } else if (message.includes("unsupported key format")) {
     message = ERROR_MESSAGES.INVALID_PRIVATE_KEY;
   } else if (message.includes("configured authentication methods failed")) {
     message = ERROR_MESSAGES.INCORRECT_PRIVATE_KEY;
-  } else if (message.includes("econnrefused")) {
+  } else if (/^ECONNREFUSED/i.test(message)) {
     message = ERROR_MESSAGES.CONNECTION_REFUSED;
   }
+  message += `\nOriginal message\n${(error.message || String(error)).toLowerCase()}`;
   throw new Error(message);
 }
 
