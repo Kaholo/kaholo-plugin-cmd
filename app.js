@@ -4,7 +4,6 @@ const {
   pathExists,
   isFile,
   handleChildProcess,
-  handleCommonErrors,
   ERROR_MESSAGES,
   promiseQueue,
   readKeyFile,
@@ -33,7 +32,7 @@ async function execute({ params }) {
   const chunks = await handleChildProcess(proc, {
     verifyExitCode: true,
     finishSignal,
-  }).catch(handleCommonErrors);
+  });
 
   return handleCommandOutput(chunks);
 }
@@ -61,7 +60,7 @@ async function remoteCommandExecute({ params }) {
     privateKey,
     username,
     passphrase,
-  }).catch(handleCommonErrors);
+  });
 
   const chunks = await executeOverSSH(sshClient, cmd);
   return handleCommandOutput(chunks);
@@ -70,7 +69,7 @@ async function remoteCommandExecute({ params }) {
 async function executeSingleCommand(command, options = {}) {
   const proc = childProcess.exec(command, options);
 
-  const chunks = await handleChildProcess(proc).catch(handleCommonErrors);
+  const chunks = await handleChildProcess(proc);
   return handleCommandOutput(chunks);
 }
 
@@ -146,7 +145,7 @@ async function executeScript({ params }) {
   // create child process
   const proc = childProcess.execFile(scriptPath);
   // handle stderr & stdout output from child process
-  const chunks = await handleChildProcess(proc).catch(handleCommonErrors);
+  const chunks = await handleChildProcess(proc);
   return handleCommandOutput(chunks);
 }
 
