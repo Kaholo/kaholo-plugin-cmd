@@ -142,8 +142,18 @@ async function executeScript({ params }) {
   if (!await isFile(scriptPath)) {
     throw ERROR_MESSAGES.PATH_IS_NOT_FILE;
   }
+
+  // change script's mode to allow for execution
+  const changeModeCommandProcess = childProcess.exec("chmod +x $SCRIPT_PATH", {
+    env: {
+      SCRIPT_PATH: scriptPath,
+    },
+  });
+  await handleChildProcess(changeModeCommandProcess);
+
   // create child process
   const proc = childProcess.execFile(scriptPath);
+
   // handle stderr & stdout output from child process
   const chunks = await handleChildProcess(proc);
   return handleCommandOutput(chunks);
