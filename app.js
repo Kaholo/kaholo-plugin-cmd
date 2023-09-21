@@ -4,7 +4,6 @@ const {
   pathExists,
   isFile,
   handleChildProcess,
-  handleCommonErrors,
   ERROR_MESSAGES,
   promiseQueue,
   readKeyFile,
@@ -33,7 +32,7 @@ async function execute({ params }) {
   const chunks = await handleChildProcess(proc, {
     verifyExitCode: true,
     finishSignal,
-  }).catch(handleCommonErrors);
+  });
 
   return handleCommandOutput(chunks);
 }
@@ -61,7 +60,7 @@ async function remoteCommandExecute({ params }) {
     privateKey,
     username,
     passphrase,
-  }).catch(handleCommonErrors);
+  });
 
   const chunks = await executeOverSSH(sshClient, cmd);
   return handleCommandOutput(chunks);
@@ -70,7 +69,7 @@ async function remoteCommandExecute({ params }) {
 async function executeSingleCommand(command, options = {}) {
   const proc = childProcess.exec(command, options);
 
-  const chunks = await handleChildProcess(proc).catch(handleCommonErrors);
+  const chunks = await handleChildProcess(proc);
   return handleCommandOutput(chunks);
 }
 
@@ -135,18 +134,29 @@ function executeMultiple({ params }) {
 
 async function executeScript({ params }) {
   const { path: scriptPath } = params;
+  const absoluteScriptPath = path.resolve(scriptPath);
   // check if script exists
-  if (!await pathExists(scriptPath)) {
+  if (!await pathExists(absoluteScriptPath)) {
     throw ERROR_MESSAGES.PATH_DOES_NOT_EXIST;
   }
   // check if path is a file
-  if (!await isFile(scriptPath)) {
+  if (!await isFile(absoluteScriptPath)) {
     throw ERROR_MESSAGES.PATH_IS_NOT_FILE;
   }
+
+  // change script's mode to allow for execution
+  const changeModeCommandProcess = childProcess.exec("chmod +x $SCRIPT_PATH", {
+    env: {
+      SCRIPT_PATH: absoluteScriptPath,
+    },
+  });
+  await handleChildProcess(changeModeCommandProcess);
+
   // create child process
-  const proc = childProcess.execFile(scriptPath);
+  const proc = childProcess.execFile(absoluteScriptPath);
+
   // handle stderr & stdout output from child process
-  const chunks = await handleChildProcess(proc).catch(handleCommonErrors);
+  const chunks = await handleChildProcess(proc);
   return handleCommandOutput(chunks);
 }
 

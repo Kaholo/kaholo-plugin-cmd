@@ -88,24 +88,6 @@ function handleChildProcess(childProcess, options = {}) {
 }
 
 /**
- * Handles common child process errors
- * @param {Error} error
- */
-function handleCommonErrors(error) {
-  let message = (error.message || String(error)).toLowerCase();
-  if (message.includes("eaccess")) {
-    message = ERROR_MESSAGES.SCRIPT_ACCESS_ERROR;
-  } else if (message.includes("unsupported key format")) {
-    message = ERROR_MESSAGES.INVALID_PRIVATE_KEY;
-  } else if (message.includes("configured authentication methods failed")) {
-    message = ERROR_MESSAGES.INCORRECT_PRIVATE_KEY;
-  } else if (message.includes("econnrefused")) {
-    message = ERROR_MESSAGES.CONNECTION_REFUSED;
-  }
-  throw new Error(message);
-}
-
-/**
  * Enqueues execution of promises
  * @param {(() => Promise)[]} promiseInitiators
  */
@@ -189,7 +171,6 @@ module.exports = {
   pathExists,
   isFile,
   handleChildProcess,
-  handleCommonErrors,
   handleCommandOutput,
   promiseQueue,
   readKeyFile,
